@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmdi.dao.MrPmEpDataDao">
+  <resultMap id="MonthData" type="com.cmdi.model.MonthParamData">
+    <result column="month" jdbcType="VARCHAR" property="month" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="cellnum" jdbcType="INTEGER" property="cellnum" />
+    <result column="twohitwolowcellnum" jdbcType="INTEGER" property="twohitwolowcellnum" />
+    <result column="lteenbnum" jdbcType="INTEGER" property="lteenbnum" />
+    <result column="ltecellnum" jdbcType="INTEGER" property="ltecellnum" />
+    <result column="singlecellmaxactvolteusernum" jdbcType="DOUBLE" property="singlecellmaxactvolteusernum" />
+    <result column="voltetraval" jdbcType="DOUBLE" property="voltetraval" />
+    <result column="trafficvaluegt1erlcellnum" jdbcType="INTEGER" property="trafficvaluegt1erlcellnum" />
+    <result column="voltetravaleq0erlcellnum" jdbcType="INTEGER" property="voltetravaleq0erlcellnum" />
+    <result column="volteradconnratio" jdbcType="DOUBLE" property="volteradconnratio" />
+    <result column="volteraddropratio" jdbcType="DOUBLE" property="volteraddropratio" />
+    <result column="esrvcchosucratio" jdbcType="DOUBLE" property="esrvcchosucratio" />
+    <result column="esrvcchoratio" jdbcType="DOUBLE" property="esrvcchoratio" />
+    <result column="mrulplratio" jdbcType="DOUBLE" property="mrulplratio" />
+    <result column="mruldlratio" jdbcType="DOUBLE" property="mruldlratio" />
+    <result column="lowvolteconnratiocellnum" jdbcType="INTEGER" property="lowvolteconnratiocellnum" />
+    <result column="highvoltedropratiocellnum" jdbcType="INTEGER" property="highvoltedropratiocellnum" />
+    <result column="higvoltemrulhplratiocellnum" jdbcType="INTEGER" property="higvoltemrulhplratiocellnum" />
+    <result column="highvoltemrdlplratiocellnum" jdbcType="INTEGER" property="highvoltemrdlplratiocellnum" />
+    <result column="lowesrvcchosucratiocellnum" jdbcType="INTEGER" property="lowesrvcchosucratiocellnum" />
+  </resultMap>
+
+  <select id="getAllCountryData" parameterType ="java.util.HashMap" resultMap="MonthData">  	
+	select left(t4.date,7) as month,t1.province, t1.city,t1.ltecellnum,t1.lteenbnum,
+		t4.mruldlratio,	t4.mrulplratio,t4.cellnum,
+		t4.voltetraval,t4.volteradconnratio,t4.volteraddropratio,t4.esrvcchosucratio,t4.esrvcchoratio,		
+		t4.twohitwolowcellnum, t4.highvoltedropratiocellnum, t4.higvoltemrulhplratiocellnum,
+		t4.highvoltemrdlplratiocellnum, t4.trafficvaluegt1erlcellnum,t4.lowvolteconnratiocellnum,
+		t4.voltetravaleq0erlcellnum ,t4.lowesrvcchosucratiocellnum,singlecellmaxactvolteusernum
+	from
+	(select t2.date,t3.city,mrulplratio,mruldlratio,voltetraval,volteradconnratio,volteraddropratio,
+	esrvcchosucratio,esrvcchoratio,singlecellmaxactvolteusernum,t3.cellnum,twohitwolowcellnum,
+	highvoltedropratiocellnum,higvoltemrulhplratiocellnum, highvoltemrdlplratiocellnum , trafficvaluegt1erlcellnum,
+ 	lowvolteconnratiocellnum, voltetravaleq0erlcellnum, lowesrvcchosucratiocellnum 
+	FROM
+	(select pm.pm_date as date,mruppdcplossratio as mrulplratio,mrdownpdcplossratio as mruldlratio,
+	 voltetraval,volteradconnratio,volteraddropratio,esrvcchosucratio,esrvcchoratio,singlecellmaxactvolteusernum	
+	from v_mrocountryresulttable mr, v_pmcountryresulttable pm  
+	where pm.scenario='all' and pm.vendor='all' and pm.scenario= mr.scenario and pm.vendor = mr.vendor
+	and pm.pm_date =#{pm_date,jdbcType=DATE} and mro_date=#{mro_date,jdbcType=DATE} LIMIT 1)
+	t2 LEFT JOIN
+(select date,city,sum(pq.cellnum) as cellnum,sum(twohitwolowcellnum) as twohitwolowcellnum,
+	sum(highvoltedropratiocellnum)as highvoltedropratiocellnum,
+	sum(higvoltemrulhplratiocellnum) as higvoltemrulhplratiocellnum,
+	sum(highvoltemrdlplratiocellnum) as highvoltemrdlplratiocellnum ,
+	sum(voltetravalgt1erlcellnum) as trafficvaluegt1erlcellnum,
+	sum(lowvolteconnratiocellnum) as lowvolteconnratiocellnum,
+	sum(voltetravaleq0erlcellnum) as voltetravaleq0erlcellnum,
+	sum(lowesrvcchosucratiocellnum) as lowesrvcchosucratiocellnum 
+	FROM v_poorqualitycelldailystatistictable  pq
+	where  pq.date=#{pq_date,jdbcType=DATE} and pq.city='all' and vendor='all' and scenario='all' )
+	t3 ON t3.date=t2.date
+	)t4 LEFT JOIN
+(select date,city,province, enbnum as lteenbnum,cellnum as ltecellnum from v_cellenbnumtable
+where date=#{ep_date,jdbcType=DATE} and scenario='all' and vendor='all'and province='all' and city='all') 
+t1
+ON  t1.date=t4.date	
+ </select> 
+ 
+ 
+  <select id="getProvinceData" parameterType ="java.util.HashMap" resultMap="MonthData">  	
+	select left(t4.date,7) as month,t1.province, t1.city,t1.ltecellnum,t1.lteenbnum,
+	t4.mruldlratio,	t4.mrulplratio,t4.cellnum,
+	t4.voltetraval,t4.volteradconnratio,t4.volteraddropratio,t4.esrvcchosucratio,t4.esrvcchoratio,		
+	t4.twohitwolowcellnum, t4.highvoltedropratiocellnum, t4.higvoltemrulhplratiocellnum,
+	t4.highvoltemrdlplratiocellnum, t4.trafficvaluegt1erlcellnum,t4.lowvolteconnratiocellnum,
+	t4.voltetravaleq0erlcellnum ,t4.lowesrvcchosucratiocellnum,singlecellmaxactvolteusernum
+	from
+	(select t2.date,t3.city,t3.province,mrulplratio,mruldlratio,voltetraval,volteradconnratio,volteraddropratio,
+	esrvcchosucratio,esrvcchoratio,singlecellmaxactvolteusernum,t3.cellnum,twohitwolowcellnum,
+	highvoltedropratiocellnum,higvoltemrulhplratiocellnum, highvoltemrdlplratiocellnum , trafficvaluegt1erlcellnum,
+	lowvolteconnratiocellnum, voltetravaleq0erlcellnum, lowesrvcchosucratiocellnum 
+	from
+	(select pm.pm_date as date,mruppdcplossratio as mrulplratio,mrdownpdcplossratio as mruldlratio,
+	 voltetraval,volteradconnratio,volteraddropratio,esrvcchosucratio,esrvcchoratio,singlecellmaxactvolteusernum	
+	from v_mroprovinceresulttable mr, v_pmprovinceresulttable pm  
+	where pm.scenario='all' and pm.vendor='all' and pm.scenario= mr.scenario and pm.vendor = mr.vendor 
+	and pm.province=mr.province	 and pm.pm_date =#{pm_date,jdbcType=DATE}  and mro_date=#{mro_date,jdbcType=DATE} 
+	and pm.province=#{province,jdbcType=VARCHAR} LIMIT 1)
+	t2 LEFT JOIN
+	(select date,city,province,sum(cellnum) as cellnum,	sum(twohitwolowcellnum) as twohitwolowcellnum,
+	sum(highvoltedropratiocellnum)as highvoltedropratiocellnum,
+	sum(higvoltemrulhplratiocellnum) as higvoltemrulhplratiocellnum,
+	sum(highvoltemrdlplratiocellnum) as highvoltemrdlplratiocellnum ,
+	sum(voltetravalgt1erlcellnum) as trafficvaluegt1erlcellnum,
+	sum(lowvolteconnratiocellnum) as lowvolteconnratiocellnum,
+	sum(voltetravaleq0erlcellnum) as voltetravaleq0erlcellnum,
+	sum(lowesrvcchosucratiocellnum) as lowesrvcchosucratiocellnum 
+	FROM v_poorqualitycelldailystatistictable 
+	where  date=#{pq_date,jdbcType=DATE}  and city='all' and vendor='all' and scenario='all'
+	and province=#{province,jdbcType=VARCHAR})
+	t3 ON t3.date=t2.date
+	)t4 LEFT JOIN
+	(select date,city,province, enbnum as lteenbnum,cellnum as ltecellnum from v_cellenbnumtable
+	where date=#{ep_date,jdbcType=DATE} and scenario='all' and vendor='all'
+	and province=#{province,jdbcType=VARCHAR} and city='all') 
+	t1  ON  t1.date=t4.date and t1.province = t4.province
+	</select>
+	
+	<select id="getCityData" parameterType ="java.util.HashMap" resultMap="MonthData">  	
+		select left(t4.date,7) as month,t4.province, t4.city,t1.ltecellnum,t1.lteenbnum,
+		t4.mruldlratio,	t4.mrulplratio,t4.cellnum,t4.voltetraval,t4.volteradconnratio,
+		t4.volteraddropratio,t4.esrvcchosucratio,t4.esrvcchoratio,		
+		t4.twohitwolowcellnum, t4.highvoltedropratiocellnum, t4.higvoltemrulhplratiocellnum,
+		t4.highvoltemrdlplratiocellnum, t4.trafficvaluegt1erlcellnum,t4.lowvolteconnratiocellnum,
+		t4.voltetravaleq0erlcellnum ,t4.lowesrvcchosucratiocellnum,singlecellmaxactvolteusernum
+	from
+	(select t2.date,t3.province,t3.city,mrulplratio,mruldlratio,voltetraval,volteradconnratio,volteraddropratio,
+	esrvcchosucratio,esrvcchoratio,singlecellmaxactvolteusernum,t3.cellnum,twohitwolowcellnum,
+	highvoltedropratiocellnum,higvoltemrulhplratiocellnum, highvoltemrdlplratiocellnum , trafficvaluegt1erlcellnum,
+ 	lowvolteconnratiocellnum, voltetravaleq0erlcellnum, lowesrvcchosucratiocellnum 
+	FROM
+	(select pm.province,pm.city,pm.pm_date as date,mruppdcplossratio as mrulplratio,mrdownpdcplossratio as mruldlratio,
+	 voltetraval,volteradconnratio,volteraddropratio,esrvcchosucratio,esrvcchoratio,singlecellmaxactvolteusernum	
+	from v_mrocityresulttable mr, v_pmcityresulttable pm  
+	where pm.scenario='all' and pm.vendor='all' and pm.scenario= mr.scenario and pm.vendor = mr.vendor
+	and pm.city = mr.city 
+	and pm.pm_date =#{pm_date,jdbcType=DATE} and mro_date=#{mro_date,jdbcType=DATE})
+t2 LEFT JOIN
+	(select date,province,city,pq.cellnum as cellnum,twohitwolowcellnum as twohitwolowcellnum,
+	highvoltedropratiocellnum as highvoltedropratiocellnum,
+	higvoltemrulhplratiocellnum as higvoltemrulhplratiocellnum,
+	highvoltemrdlplratiocellnum as highvoltemrdlplratiocellnum ,
+	voltetravalgt1erlcellnum as trafficvaluegt1erlcellnum,
+	lowvolteconnratiocellnum as lowvolteconnratiocellnum,
+	voltetravaleq0erlcellnum as voltetravaleq0erlcellnum,
+	lowesrvcchosucratiocellnum as lowesrvcchosucratiocellnum 
+	FROM v_poorqualitycelldailystatistictable  pq
+	where  pq.date=#{pq_date,jdbcType=DATE} and  vendor='all' and scenario='all' and city!='all' 
+	and province=#{province,jdbcType=VARCHAR})
+	t3 ON t3.date=t2.date and t2.province = t3.province and t2.city=t3.city
+	)t4 LEFT JOIN
+	(select date,city,province, enbnum as lteenbnum,cellnum as ltecellnum from v_cellenbnumtable
+	where date=#{ep_date,jdbcType=DATE} and scenario='all' and vendor='all' and city!='all') 
+t1
+ON t1.city=t4.city and t1.province = t4.province
+	
+ </select>
+ 
+<insert id="insertBatch" useGeneratedKeys="true" parameterType="java.util.List">  
+	    <selectKey resultType="long" keyProperty="id" order="AFTER">  
+	        SELECT  
+	        LAST_INSERT_ID()  
+	    </selectKey>  
+	    insert into v_twolowtwohighcellmonthtable(month,province,city,cellnum,twohitwolowcellnum,
+	    	lteenbnum,ltecellnum,singlecellmaxactvolteusernum,voltetraval,trafficvaluegt1erlcellnum,voltetravaleq0erlcellnum,
+	    	volteradconnratio,volteraddropratio,esrvcchosucratio,esrvcchoratio,mrulplratio,mruldlratio,lowvolteconnratiocellnum,
+	    	highvoltedropratiocellnum,higvoltemrulhplratiocellnum,highvoltemrdlplratiocellnum,lowesrvcchosucratiocellnum)	    	
+	    	values
+	    	<foreach collection="list" item ="item" index="index" separator=",">
+	    	(#{item.month,jdbcType=VARCHAR},
+	    	#{item.province,jdbcType=VARCHAR},
+	        #{item.city,jdbcType=VARCHAR},
+	        #{item.cellnum,jdbcType=INTEGER},
+	        #{item.twohitwolowcellnum,jdbcType=INTEGER},
+	        #{item.lteenbnum,jdbcType=INTEGER},
+	        #{item.ltecellnum,jdbcType=INTEGER},
+	        #{item.singlecellmaxactvolteusernum,jdbcType=DOUBLE},
+	        #{item.voltetraval,jdbcType=DOUBLE},
+	        #{item.trafficvaluegt1erlcellnum,jdbcType=INTEGER}, 
+	        #{item.voltetravaleq0erlcellnum,jdbcType=INTEGER},
+	        #{item.volteradconnratio,jdbcType=DOUBLE},
+	        #{item.volteraddropratio,jdbcType=DOUBLE},
+	        #{item.esrvcchosucratio,jdbcType=DOUBLE},
+	        #{item.esrvcchoratio,jdbcType=DOUBLE},
+	        #{item.mrulplratio,jdbcType=DOUBLE},
+	        #{item.mruldlratio,jdbcType=DOUBLE},
+	        #{item.lowvolteconnratiocellnum,jdbcType=INTEGER},
+	        #{item.highvoltedropratiocellnum,jdbcType=INTEGER},
+	        #{item.higvoltemrulhplratiocellnum,jdbcType=INTEGER},
+	        #{item.highvoltemrdlplratiocellnum,jdbcType=INTEGER},
+	        #{item.lowesrvcchosucratiocellnum,jdbcType=INTEGER}) 
+	    	</foreach>		    	    
+	</insert>
+  	<insert id="insertSelective" parameterType="com.cmdi.model.TlthrecTableDate">
+    insert into v_tlthrectable
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="month != null">
+        month,
+      </if>
+      <if test="province != null">
+        province,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="month != null">
+        #{month,jdbcType=DATE},
+      </if>
+      <if test="province != null">
+        #{province,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <delete id="deleteByProvinceAndMonth">
+  	delete from v_twolowtwohighcellmonthtable
+  	where month=#{month,jdbcType=VARCHAR} and province=#{province,jdbcType=VARCHAR}
+  </delete>
+  
+  <resultMap id="taskdate" type="com.cmdi.model.TlthrecTableDate"></resultMap>
+  	<select id = "getRecentDate" parameterType="java.util.HashMap" resultType="String">
+  		select province from v_tlthrectable where month=#{month,jdbcType=VARCHAR}  and province=#{province,jdbcType=VARCHAR}  
+  </select>  
+  
+  <resultMap id="basereust" type ="com.cmdi.model.TlthrecTableDate"></resultMap>
+  	<select id="getPmP" parameterType="java.util.HashMap" resultType="String">
+  		select province from v_pmtasktable where pm_date=#{date,jdbcType=DATE} and province=#{province,jdbcType=VARCHAR}
+  	</select>  	
+   	<select id= "getMrP" parameterType="java.util.HashMap" resultType="String">
+   		select province from v_mrotasktable where mro_date =#{date,jdbcType=DATE} and province=#{province,jdbcType=VARCHAR}
+   	</select>
+   	
+   	 <select id="getNewCellData" parameterType="java.util.HashMap" resultType="String"> 	
+	<choose>
+		<when test ="province=='all'">
+		select date from v_cellenbnumtable 	where date &lt;=#{date,jdbcType=DATE} and vendor='all' and scenario='all'
+ 		ORDER BY date DESC LIMIT 1
+		</when>
+		<when test ="province!='all' ">
+		select date from v_cellenbnumtable 	where date &lt;=#{date,jdbcType=DATE} and vendor='all' and scenario='all'
+ 		and city='all' ORDER BY date DESC LIMIT 1
+		</when>		
+	</choose>	
+	</select>
+	<select id="getCNewCellData" parameterType="String" resultType="String"> 	
+		select date from v_cellenbnumtable 	where date &lt;=#{date,jdbcType=DATE} and vendor='all' and scenario='all'
+ 		 ORDER BY date DESC LIMIT 1
+ 	</select>
+	<select id="getPNewCellData" parameterType="String" resultType="String"> 	
+		select date from v_cellenbnumtable 	where date &lt;=#{date,jdbcType=DATE} and vendor='all' and scenario='all'
+ 		and city ='all' ORDER BY date DESC LIMIT 1
+ 	</select>
+	<select id="getCityNewCellData" parameterType="String" resultType="String"> 	
+		select date from v_cellenbnumtable 	where date &lt;=#{date,jdbcType=DATE} and vendor='all' and scenario='all'
+ 		and city!='all' ORDER BY date DESC LIMIT 1
+ 	</select>
+  	
+</mapper>

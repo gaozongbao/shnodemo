@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmdi.dao.CnPiDao">
+  <resultMap id="BaseResultMap" type="com.cmdi.model.CnPi">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="date" jdbcType="DATE" property="date" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="cellname" jdbcType="VARCHAR" property="cellname" />
+    <result column="eci" jdbcType="VARCHAR" property="eci" />
+    <result column="imsregattempnum" jdbcType="INTEGER" property="imsregattempnum" />
+    <result column="imsregsucnum" jdbcType="INTEGER" property="imsregsucnum" />
+    <result column="cnvolteconnattempnum" jdbcType="INTEGER" property="cnvolteconnattempnum" />
+    <result column="cnvolteconnsucnum" jdbcType="INTEGER" property="cnvolteconnsucnum" />
+    <result column="cnvoltedropnum" jdbcType="INTEGER" property="cnvoltedropnum" />
+    <result column="bsrvcchoattempnum" jdbcType="INTEGER" property="bsrvcchoattempnum" />
+    <result column="bsrvcchosucnum" jdbcType="INTEGER" property="bsrvcchosucnum" />
+    <result column="asrvcchoattempnum" jdbcType="INTEGER" property="asrvcchoattempnum" />
+    <result column="asrvcchosucnum" jdbcType="INTEGER" property="asrvcchosucnum" />
+    <result column="esrvcchoattempnum" jdbcType="INTEGER" property="esrvcchoattempnum" />
+    <result column="esrvcchosucnum" jdbcType="INTEGER" property="esrvcchosucnum" />
+    <result column="srvcchoattempnum" jdbcType="INTEGER" property="srvcchoattempnum" />
+    <result column="srvcchosucnum" jdbcType="INTEGER" property="srvcchosucnum" />
+    <result column="vvcondelaytoohighnum" jdbcType="INTEGER" property="vvcondelaytoohighnum" />
+    <result column="intecondelaytoohighnum" jdbcType="INTEGER" property="intecondelaytoohighnum" />
+    <result column="vvcondelay" jdbcType="DOUBLE" property="vvcondelay" />
+    <result column="intecondelay" jdbcType="DOUBLE" property="intecondelay" />
+    <result column="esrvcchofailradionum" jdbcType="INTEGER" property="esrvcchofailradionum" />
+    <result column="asrvcchofailradionum" jdbcType="INTEGER" property="asrvcchofailradionum" />
+    <result column="bsrvcchofailradionum" jdbcType="INTEGER" property="bsrvcchofailradionum" />
+    <result column="imsregfailradionum" jdbcType="INTEGER" property="imsregfailradionum" />
+    <result column="cnvolteconnfailradionum" jdbcType="INTEGER" property="cnvolteconnfailradionum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, date, province, city, cellname, eci, imsregattempnum, imsregsucnum, cnvolteconnattempnum, 
+    cnvolteconnsucnum, cnvoltedropnum, bsrvcchoattempnum, bsrvcchosucnum, asrvcchoattempnum, 
+    asrvcchosucnum, esrvcchoattempnum, esrvcchosucnum, srvcchoattempnum, srvcchosucnum, 
+    vvcondelaytoohighnum, intecondelaytoohighnum, vvcondelay, intecondelay, esrvcchofailradionum, imsregfailradionum,
+    cnvolteconnfailradionum,bsrvcchofailradionum,asrvcchofailradionum
+  </sql>
+  
+  <select id="getAllCnEciInfo" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+  	from v_cnetoetable2
+  	where date=#{date,jdbcType=DATE} and province=#{province,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from v_cnpitable
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from v_cnpitable
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.cmdi.model.CnPi">
+    insert into v_cnpitable (id, date, province, 
+      city, cellname, eci, 
+      imsregattempnum, imsregsucnum, cnvolteconnattempnum, 
+      cnvolteconnsucnum, cnvoltedropnum, bsrvcchoattempnum, 
+      bsrvcchosucnum, asrvcchoattempnum, asrvcchosucnum, 
+      esrvcchoattempnum, esrvcchosucnum, srvcchoattempnum, 
+      srvcchosucnum, vvcondelaytoohighnum, intecondelaytoohighnum, 
+      vvcondelay, intecondelay)
+    values (#{id,jdbcType=BIGINT}, #{date,jdbcType=DATE}, #{province,jdbcType=VARCHAR}, 
+      #{city,jdbcType=VARCHAR}, #{cellname,jdbcType=VARCHAR}, #{eci,jdbcType=VARCHAR}, 
+      #{imsregattempnum,jdbcType=INTEGER}, #{imsregsucnum,jdbcType=INTEGER}, #{cnvolteconnattempnum,jdbcType=INTEGER}, 
+      #{cnvolteconnsucnum,jdbcType=INTEGER}, #{cnvoltedropnum,jdbcType=INTEGER}, #{bsrvcchoattempnum,jdbcType=INTEGER}, 
+      #{bsrvcchosucnum,jdbcType=INTEGER}, #{asrvcchoattempnum,jdbcType=INTEGER}, #{asrvcchosucnum,jdbcType=INTEGER}, 
+      #{esrvcchoattempnum,jdbcType=INTEGER}, #{esrvcchosucnum,jdbcType=INTEGER}, #{srvcchoattempnum,jdbcType=INTEGER}, 
+      #{srvcchosucnum,jdbcType=INTEGER}, #{vvcondelaytoohighnum,jdbcType=INTEGER}, #{intecondelaytoohighnum,jdbcType=INTEGER}, 
+      #{vvcondelay,jdbcType=DOUBLE}, #{intecondelay,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cmdi.model.CnPi">
+    insert into v_cnpitable
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="date != null">
+        date,
+      </if>
+      <if test="province != null">
+        province,
+      </if>
+      <if test="city != null">
+        city,
+      </if>
+      <if test="cellname != null">
+        cellname,
+      </if>
+      <if test="eci != null">
+        eci,
+      </if>
+      <if test="imsregattempnum != null">
+        imsregattempnum,
+      </if>
+      <if test="imsregsucnum != null">
+        imsregsucnum,
+      </if>
+      <if test="cnvolteconnattempnum != null">
+        cnvolteconnattempnum,
+      </if>
+      <if test="cnvolteconnsucnum != null">
+        cnvolteconnsucnum,
+      </if>
+      <if test="cnvoltedropnum != null">
+        cnvoltedropnum,
+      </if>
+      <if test="bsrvcchoattempnum != null">
+        bsrvcchoattempnum,
+      </if>
+      <if test="bsrvcchosucnum != null">
+        bsrvcchosucnum,
+      </if>
+      <if test="asrvcchoattempnum != null">
+        asrvcchoattempnum,
+      </if>
+      <if test="asrvcchosucnum != null">
+        asrvcchosucnum,
+      </if>
+      <if test="esrvcchoattempnum != null">
+        esrvcchoattempnum,
+      </if>
+      <if test="esrvcchosucnum != null">
+        esrvcchosucnum,
+      </if>
+      <if test="srvcchoattempnum != null">
+        srvcchoattempnum,
+      </if>
+      <if test="srvcchosucnum != null">
+        srvcchosucnum,
+      </if>
+      <if test="vvcondelaytoohighnum != null">
+        vvcondelaytoohighnum,
+      </if>
+      <if test="intecondelaytoohighnum != null">
+        intecondelaytoohighnum,
+      </if>
+      <if test="vvcondelay != null">
+        vvcondelay,
+      </if>
+      <if test="intecondelay != null">
+        intecondelay,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="date != null">
+        #{date,jdbcType=DATE},
+      </if>
+      <if test="province != null">
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null">
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="cellname != null">
+        #{cellname,jdbcType=VARCHAR},
+      </if>
+      <if test="eci != null">
+        #{eci,jdbcType=VARCHAR},
+      </if>
+      <if test="imsregattempnum != null">
+        #{imsregattempnum,jdbcType=INTEGER},
+      </if>
+      <if test="imsregsucnum != null">
+        #{imsregsucnum,jdbcType=INTEGER},
+      </if>
+      <if test="cnvolteconnattempnum != null">
+        #{cnvolteconnattempnum,jdbcType=INTEGER},
+      </if>
+      <if test="cnvolteconnsucnum != null">
+        #{cnvolteconnsucnum,jdbcType=INTEGER},
+      </if>
+      <if test="cnvoltedropnum != null">
+        #{cnvoltedropnum,jdbcType=INTEGER},
+      </if>
+      <if test="bsrvcchoattempnum != null">
+        #{bsrvcchoattempnum,jdbcType=INTEGER},
+      </if>
+      <if test="bsrvcchosucnum != null">
+        #{bsrvcchosucnum,jdbcType=INTEGER},
+      </if>
+      <if test="asrvcchoattempnum != null">
+        #{asrvcchoattempnum,jdbcType=INTEGER},
+      </if>
+      <if test="asrvcchosucnum != null">
+        #{asrvcchosucnum,jdbcType=INTEGER},
+      </if>
+      <if test="esrvcchoattempnum != null">
+        #{esrvcchoattempnum,jdbcType=INTEGER},
+      </if>
+      <if test="esrvcchosucnum != null">
+        #{esrvcchosucnum,jdbcType=INTEGER},
+      </if>
+      <if test="srvcchoattempnum != null">
+        #{srvcchoattempnum,jdbcType=INTEGER},
+      </if>
+      <if test="srvcchosucnum != null">
+        #{srvcchosucnum,jdbcType=INTEGER},
+      </if>
+      <if test="vvcondelaytoohighnum != null">
+        #{vvcondelaytoohighnum,jdbcType=INTEGER},
+      </if>
+      <if test="intecondelaytoohighnum != null">
+        #{intecondelaytoohighnum,jdbcType=INTEGER},
+      </if>
+      <if test="vvcondelay != null">
+        #{vvcondelay,jdbcType=DOUBLE},
+      </if>
+      <if test="intecondelay != null">
+        #{intecondelay,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cmdi.model.CnPi">
+    update v_cnpitable
+    <set>
+      <if test="date != null">
+        date = #{date,jdbcType=DATE},
+      </if>
+      <if test="province != null">
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null">
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="cellname != null">
+        cellname = #{cellname,jdbcType=VARCHAR},
+      </if>
+      <if test="eci != null">
+        eci = #{eci,jdbcType=VARCHAR},
+      </if>
+      <if test="imsregattempnum != null">
+        imsregattempnum = #{imsregattempnum,jdbcType=INTEGER},
+      </if>
+      <if test="imsregsucnum != null">
+        imsregsucnum = #{imsregsucnum,jdbcType=INTEGER},
+      </if>
+      <if test="cnvolteconnattempnum != null">
+        cnvolteconnattempnum = #{cnvolteconnattempnum,jdbcType=INTEGER},
+      </if>
+      <if test="cnvolteconnsucnum != null">
+        cnvolteconnsucnum = #{cnvolteconnsucnum,jdbcType=INTEGER},
+      </if>
+      <if test="cnvoltedropnum != null">
+        cnvoltedropnum = #{cnvoltedropnum,jdbcType=INTEGER},
+      </if>
+      <if test="bsrvcchoattempnum != null">
+        bsrvcchoattempnum = #{bsrvcchoattempnum,jdbcType=INTEGER},
+      </if>
+      <if test="bsrvcchosucnum != null">
+        bsrvcchosucnum = #{bsrvcchosucnum,jdbcType=INTEGER},
+      </if>
+      <if test="asrvcchoattempnum != null">
+        asrvcchoattempnum = #{asrvcchoattempnum,jdbcType=INTEGER},
+      </if>
+      <if test="asrvcchosucnum != null">
+        asrvcchosucnum = #{asrvcchosucnum,jdbcType=INTEGER},
+      </if>
+      <if test="esrvcchoattempnum != null">
+        esrvcchoattempnum = #{esrvcchoattempnum,jdbcType=INTEGER},
+      </if>
+      <if test="esrvcchosucnum != null">
+        esrvcchosucnum = #{esrvcchosucnum,jdbcType=INTEGER},
+      </if>
+      <if test="srvcchoattempnum != null">
+        srvcchoattempnum = #{srvcchoattempnum,jdbcType=INTEGER},
+      </if>
+      <if test="srvcchosucnum != null">
+        srvcchosucnum = #{srvcchosucnum,jdbcType=INTEGER},
+      </if>
+      <if test="vvcondelaytoohighnum != null">
+        vvcondelaytoohighnum = #{vvcondelaytoohighnum,jdbcType=INTEGER},
+      </if>
+      <if test="intecondelaytoohighnum != null">
+        intecondelaytoohighnum = #{intecondelaytoohighnum,jdbcType=INTEGER},
+      </if>
+      <if test="vvcondelay != null">
+        vvcondelay = #{vvcondelay,jdbcType=DOUBLE},
+      </if>
+      <if test="intecondelay != null">
+        intecondelay = #{intecondelay,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cmdi.model.CnPi">
+    update v_cnpitable
+    set date = #{date,jdbcType=DATE},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      cellname = #{cellname,jdbcType=VARCHAR},
+      eci = #{eci,jdbcType=VARCHAR},
+      imsregattempnum = #{imsregattempnum,jdbcType=INTEGER},
+      imsregsucnum = #{imsregsucnum,jdbcType=INTEGER},
+      cnvolteconnattempnum = #{cnvolteconnattempnum,jdbcType=INTEGER},
+      cnvolteconnsucnum = #{cnvolteconnsucnum,jdbcType=INTEGER},
+      cnvoltedropnum = #{cnvoltedropnum,jdbcType=INTEGER},
+      bsrvcchoattempnum = #{bsrvcchoattempnum,jdbcType=INTEGER},
+      bsrvcchosucnum = #{bsrvcchosucnum,jdbcType=INTEGER},
+      asrvcchoattempnum = #{asrvcchoattempnum,jdbcType=INTEGER},
+      asrvcchosucnum = #{asrvcchosucnum,jdbcType=INTEGER},
+      esrvcchoattempnum = #{esrvcchoattempnum,jdbcType=INTEGER},
+      esrvcchosucnum = #{esrvcchosucnum,jdbcType=INTEGER},
+      srvcchoattempnum = #{srvcchoattempnum,jdbcType=INTEGER},
+      srvcchosucnum = #{srvcchosucnum,jdbcType=INTEGER},
+      vvcondelaytoohighnum = #{vvcondelaytoohighnum,jdbcType=INTEGER},
+      intecondelaytoohighnum = #{intecondelaytoohighnum,jdbcType=INTEGER},
+      vvcondelay = #{vvcondelay,jdbcType=DOUBLE},
+      intecondelay = #{intecondelay,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

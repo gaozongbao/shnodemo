@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmdi.dao.VCnetoetableDao">
+      <resultMap id="BaseResultMap" type="com.cmdi.model.VCnetoetable">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="date" jdbcType="DATE" property="date" />
+     <result column="province" jdbcType="VARCHAR" property="province" />
+     <result column="city" jdbcType="VARCHAR" property="city" />
+     <result column="scenario" jdbcType="VARCHAR" property="scenario" />
+     <result column="vendor" jdbcType="VARCHAR" property="vendor" />
+     <result column="volteconnratio" jdbcType="DOUBLE" property="volteconnratio" />
+     <result column="voltedropratio" jdbcType="DOUBLE" property="voltedropratio" />
+     <result column="esrvcchosucratio" jdbcType="DOUBLE" property="esrvcchosucratio" />
+  </resultMap>
+    
+	<!-- 全国所有地市不分场景不分厂家统计结果 -->
+	  <select id="sumall" resultMap="BaseResultMap">
+		select 
+			province,city,scenario,vendor,date,
+			(sum(cnvolteconnsucnum)/sum(cnvolteconnattempnum))*100 as volteconnratio,
+		    (sum(cnvoltedropnum)/sum(cnvolteconnsucnum))*100 as voltedropratio,
+			(sum(esrvcchosucnum)/sum(srvcchoattempnum))*100 as esrvcchosucratio 
+		from v_cnetoetable
+		where date=#{date,jdbcType=DATE}
+	  </select>
+	
+	
+	
+		<!-- 全国所有地市不分场景分厂家统计结果 -->
+	  <select id="sumByVendor" resultMap="BaseResultMap">
+		SELECT 
+			province,city,scenario,vendor,date,
+			(sum(cnvolteconnsucnum)/sum(cnvolteconnattempnum))*100 as volteconnratio,
+		    (sum(cnvoltedropnum)/sum(cnvolteconnsucnum))*100 as voltedropratio,
+			(sum(esrvcchosucnum)/sum(srvcchoattempnum))*100 as esrvcchosucratio 
+		From v_cnetoetable
+		where date=#{date,jdbcType=DATE}
+		GROUP BY vendor
+	  </select>
+	  
+	  
+	  	<!-- 全国所有地市分场景不分厂家统计结果 -->
+	  <select id="sumByScenario" resultMap="BaseResultMap">
+		SELECT 
+			province,city,scenario,vendor,date,
+			(sum(cnvolteconnsucnum)/sum(cnvolteconnattempnum))*100 as volteconnratio,
+		    (sum(cnvoltedropnum)/sum(cnvolteconnsucnum))*100 as voltedropratio,
+			(sum(esrvcchosucnum)/sum(srvcchoattempnum))*100 as esrvcchosucratio 
+		From v_cnetoetable
+		where date=#{date,jdbcType=DATE}
+		GROUP BY scenario
+	  </select>
+	  
+	  
+	  <!-- 全国所有地市分场景分厂家统计结果 -->
+	  <select id="sumByScenarioVendor" resultMap="BaseResultMap">
+		SELECT 
+			province,city,scenario,vendor,date,
+			(sum(cnvolteconnsucnum)/sum(cnvolteconnattempnum))*100 as volteconnratio,
+		    (sum(cnvoltedropnum)/sum(cnvolteconnsucnum))*100 as voltedropratio,
+			(sum(esrvcchosucnum)/sum(srvcchoattempnum))*100 as esrvcchosucratio 
+		From v_cnetoetable
+		where date=#{date,jdbcType=DATE}
+		GROUP BY scenario,vendor
+	  </select>
+	
+	
+		  <!-- 分省所有地市不分场景不分厂家统计结果 -->
+	  <select id="sumByProvince" resultMap="BaseResultMap">
+		SELECT 
+			province,city,scenario,vendor,date,
+			(sum(cnvolteconnsucnum)/sum(cnvolteconnattempnum))*100 as volteconnratio,
+		    (sum(cnvoltedropnum)/sum(cnvolteconnsucnum))*100 as voltedropratio,
+			(sum(esrvcchosucnum)/sum(srvcchoattempnum))*100 as esrvcchosucratio 
+		From v_cnetoetable
+		where date=#{date,jdbcType=DATE}
+		GROUP BY province
+	  </select>
+	  
+	  
+	  <!-- 分省所有地市不分场景分厂家统计结果 -->
+	  <select id="sumByProvinceVendor" resultMap="BaseResultMap">
+		SELECT 
+			province,city,scenario,vendor,date,
+			(sum(cnvolteconnsucnum)/sum(cnvolteconnattempnum))*100 as volteconnratio,
+		    (sum(cnvoltedropnum)/sum(cnvolteconnsucnum))*100 as voltedropratio,
+			(sum(esrvcchosucnum)/sum(srvcchoattempnum))*100 as esrvcchosucratio 
+		From v_cnetoetable
+		where date=#{date,jdbcType=DATE}
+		GROUP BY province,vendor
+	  </select>
+	
+	
+    	  
+	  <!-- 分省所有地市分场景不分厂家统计结果 -->
+	  <select id="sumByProvinceScenario" resultMap="BaseResultMap">
+		SELECT 
+			province,city,scenario,vendor,date,
+			(sum(cnvolteconnsucnum)/sum(cnvolteconnattempnum))*100 as volteconnratio,
+		    (sum(cnvoltedropnum)/sum(cnvolteconnsucnum))*100 as voltedropratio,
+			(sum(esrvcchosucnum)/sum(srvcchoattempnum))*100 as esrvcchosucratio 
+		From v_cnetoetable
+		where date=#{date,jdbcType=DATE}
+		GROUP BY province,scenario
+	  </select>
+	  
+	  
+	  	  <!-- 分省所有地市分场景分厂家统计结果 -->
+	  <select id="sumByProvinceScenarioVendor" resultMap="BaseResultMap">
+		SELECT 
+			province,city,scenario,vendor,date,
+			(sum(cnvolteconnsucnum)/sum(cnvolteconnattempnum))*100 as volteconnratio,
+		    (sum(cnvoltedropnum)/sum(cnvolteconnsucnum))*100 as voltedropratio,
+			(sum(esrvcchosucnum)/sum(srvcchoattempnum))*100 as esrvcchosucratio 
+		From v_cnetoetable
+		where date=#{date,jdbcType=DATE}
+		GROUP BY province,scenario,vendor
+	  </select>
+	
+	
+	
+	  <!-- 分省分地市不分场景不分厂家统计结果 -->
+	  <select id="sumByProvinceCity" resultMap="BaseResultMap">
+		SELECT 
+			province,city,scenario,vendor,date,
+			(sum(cnvolteconnsucnum)/sum(cnvolteconnattempnum))*100 as volteconnratio,
+		    (sum(cnvoltedropnum)/sum(cnvolteconnsucnum))*100 as voltedropratio,
+			(sum(esrvcchosucnum)/sum(srvcchoattempnum))*100 as esrvcchosucratio 
+		From v_cnetoetable
+		where date=#{date,jdbcType=DATE}
+		GROUP BY province,city
+	  </select>
+
+	  <!-- 分省分地市不分场景分厂家统计结果 -->
+	  <select id="sumByProvinceCityVendor" resultMap="BaseResultMap">
+		SELECT 
+			province,city,scenario,vendor,date,
+			(sum(cnvolteconnsucnum)/sum(cnvolteconnattempnum))*100 as volteconnratio,
+		    (sum(cnvoltedropnum)/sum(cnvolteconnsucnum))*100 as voltedropratio,
+			(sum(esrvcchosucnum)/sum(srvcchoattempnum))*100 as esrvcchosucratio 
+		From v_cnetoetable
+		where date=#{date,jdbcType=DATE}
+		GROUP BY province,city,vendor
+	  </select>
+	  
+	  
+	  	  <!-- 分省分地市分场景不分厂家统计结果 -->
+	  <select id="sumByProvinceCityScenario" resultMap="BaseResultMap">
+		SELECT 
+			province,city,scenario,vendor,date,
+			(sum(cnvolteconnsucnum)/sum(cnvolteconnattempnum))*100 as volteconnratio,
+		    (sum(cnvoltedropnum)/sum(cnvolteconnsucnum))*100 as voltedropratio,
+			(sum(esrvcchosucnum)/sum(srvcchoattempnum))*100 as esrvcchosucratio 
+		From v_cnetoetable
+		where date=#{date,jdbcType=DATE}
+		GROUP BY province,city,scenario
+	  </select>
+	  
+	  
+	  <!-- 分省分地市分场景分厂家统计结果 -->
+	  <select id="sumByProvinceCityScenarioVendor" resultMap="BaseResultMap">
+		SELECT 
+			province,city,scenario,vendor,date,
+			(sum(cnvolteconnsucnum)/sum(cnvolteconnattempnum))*100 as volteconnratio,
+		    (sum(cnvoltedropnum)/sum(cnvolteconnsucnum))*100 as voltedropratio,
+			(sum(esrvcchosucnum)/sum(srvcchoattempnum))*100 as esrvcchosucratio 
+		From v_cnetoetable
+		where date=#{date,jdbcType=DATE}
+		GROUP BY province,city,scenario,vendor
+	  </select>
+	
+
+	
+</mapper>

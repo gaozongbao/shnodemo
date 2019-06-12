@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmdi.dao.VCnresulttableDao">
+	
+	<insert id="insert">
+		INSERT INTO v_cnresulttable(
+			cn_date,
+			province,
+			city,
+			scenario,
+			vendor,
+			volteconnratio,
+			voltedropratio,
+			esrvcchosucratio,
+			volteplratio
+		) VALUES (
+			#{cnDate},
+			#{province},
+			#{city},
+			#{scenario},
+			#{vendor},
+			#{volteconnratio},
+			#{voltedropratio},
+			#{esrvcchosucratio},
+			#{volteplratio}
+		)
+	</insert>
+	
+	  <sql id="insert_Base_Column_List">
+		cn_date,
+		province,
+		city,
+		scenario,
+		vendor,
+		volteconnratio,
+		voltedropratio,
+		esrvcchosucratio,
+		volteplratio
+  </sql>
+	
+	<insert id="insertBatch" useGeneratedKeys="true">  
+	    <selectKey resultType="long" keyProperty="id" order="AFTER">  
+	        SELECT  
+	        LAST_INSERT_ID()  
+	    </selectKey>  
+	    insert into v_cnresulttable (<include refid="insert_Base_Column_List"/>)
+	    values  
+	    <foreach collection="list" item="item" index="index" separator="," >  
+	        (#{item.cnDate,jdbcType=DATE},
+	         #{item.province,jdbcType=VARCHAR},
+	         #{item.city,jdbcType=VARCHAR},
+	         #{item.scenario,jdbcType=VARCHAR},
+	         #{item.vendor,jdbcType=VARCHAR},
+	         #{item.volteconnratio,jdbcType=DOUBLE},
+	         #{item.voltedropratio,jdbcType=DOUBLE},
+	         #{item.esrvcchosucratio,jdbcType=DOUBLE},
+	         #{item.volteplratio,jdbcType=DOUBLE})  
+	    </foreach>  
+	</insert>
+	
+	
+</mapper>
