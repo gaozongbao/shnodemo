@@ -15,19 +15,12 @@ public class SaoPinData {
 	private Integer earfcn;
 	private Double rs;
 	private Integer mastercellId;
-	private Double mastercellCover;
 	
 	public Integer getMastercellId() {
 		return mastercellId;
 	}
 	public void setMastercellId(Integer mastercellId) {
 		this.mastercellId = mastercellId;
-	}
-	public Double getMastercellCover() {
-		return mastercellCover;
-	}
-	public void setMastercellCover(Double mastercellCover) {
-		this.mastercellCover = mastercellCover;
 	}
 	public Integer getPci() {
 		return pci;
@@ -68,9 +61,10 @@ public class SaoPinData {
 	@Override
 	public String toString() {
 		return "SaoPinData [pci=" + pci + ", timestamp=" + timestamp + ", longitude=" + longitude + ", latitude="
-				+ latitude + ", earfcn=" + earfcn + ", rs=" + rs + ", mastercellId=" + mastercellId
-				+ ", mastercellCover=" + mastercellCover + "]";
+				+ latitude + ", earfcn=" + earfcn + ", rs=" + rs + ", mastercellId=" + mastercellId + "]";
 	}
+
+	
 	
 	
 
