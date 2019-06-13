@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmdi.dao.FourSaopinAddrDao">
+  <resultMap id="BaseResultMap" type="com.cmdi.model.FourSaopinAddr">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="timestamp" jdbcType="VARCHAR" property="timestamp" />
+    <result column="longitude" jdbcType="DOUBLE" property="longitude" />
+    <result column="latitude" jdbcType="DOUBLE" property="latitude" />
+    <result column="earfcn" jdbcType="INTEGER" property="earfcn" />
+    <result column="pci" jdbcType="INTEGER" property="pci" />
+    <result column="sss_rssi" jdbcType="DOUBLE" property="sssRssi" />
+    <result column="sss_rp" jdbcType="DOUBLE" property="sssRp" />
+    <result column="r0_rp" jdbcType="DOUBLE" property="r0Rp" />
+    <result column="r0_rq" jdbcType="DOUBLE" property="r0Rq" />
+    <result column="r0_cinr" jdbcType="DOUBLE" property="r0Cinr" />
+    <result column="timing" jdbcType="INTEGER" property="timing" />
+    <result column="ant_cnt" jdbcType="VARCHAR" property="antCnt" />
+    <result column="bw" jdbcType="VARCHAR" property="bw" />
+    <result column="ant_rp_dif" jdbcType="VARCHAR" property="antRpDif" />
+    <result column="prb_ant_no" jdbcType="VARCHAR" property="prbAntNo" />
+    <result column="operator" jdbcType="VARCHAR" property="operator" />
+    <result column="pattern" jdbcType="VARCHAR" property="pattern" />
+    <result column="direction" jdbcType="VARCHAR" property="direction" />
+  </resultMap>
+
+  <insert id="insertSwSaopinAddr" parameterType="java.util.List">
+    INSERT INTO fourg_saopin_addr (`date`,`timestamp`,longitude,latitude,earfcn,pci,sss_rssi,sss_rp,r0_rp,r0_rq,r0_cinr,timing,operator,pattern)
+    VALUES
+    <foreach collection="list" item="item" index="index" separator=",">
+      (
+      #{item.date}, #{item.timestamp},#{item.longitude},#{item.latitude},
+      #{item.earfcn},#{item.pci},#{item.sssRssi},#{item.sssRp},#{item.r0Rp},#{item.r0Rq},#{item.r0Cinr}
+      ,#{item.timing},#{item.operator},#{item.pattern}
+      )
+    </foreach>
+
+  </insert>
+</mapper>
