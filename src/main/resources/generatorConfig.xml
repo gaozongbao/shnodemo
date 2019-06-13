@@ -4,7 +4,7 @@
 	<!-- 引入基础配置文件 -->
 	<properties resource="jdbc.properties"/>
 	<!-- 配置mysqljdbc.jar的路径 -->
-	<classPathEntry location="E:/install/jars/mysql-connector-java-5.1.6-bin.jar"/>
+	<classPathEntry location="E:\mavenrepositories\mysql\mysql-connector-java\5.1.44\mysql-connector-java-5.1.44.jar"/>
   <context id="context1">
   	<commentGenerator>
   		<!-- 抑制警告 -->
@@ -18,22 +18,22 @@
     <jdbcConnection connectionURL="${jdbc.mysql.url}" 
     				driverClass="${jdbc.mysql.driverClassName}" password="${jdbc.mysql.password}" userId="${jdbc.mysql.username}" />
     <!-- 根据数据库表产生实体类 -->
-    <javaModelGenerator targetPackage="com.cmdi.model" targetProject="Volte_Statistics/src/main/java">
+    <javaModelGenerator targetPackage="com.cmdi.model" targetProject="shnodemo/src/main/java">
     	<property name="enableSubPackages" value="false"/>
     	<property name="trimStrings" value="false" />
     </javaModelGenerator>
-    <sqlMapGenerator targetPackage="com.cmdi.dao" targetProject="Volte_Statistics/src/main/java">
+    <sqlMapGenerator targetPackage="com.cmdi.dao" targetProject="shnodemo/src/main/java">
     	<property name="enableSubPackages" value="false"/>
     </sqlMapGenerator>
         <!-- 生成mapxml对应接口dao -->
-    <javaClientGenerator targetPackage="com.cmdi.dao" targetProject="Volte_Statistics/src/main/java" type="XMLMAPPER">
+    <javaClientGenerator targetPackage="com.cmdi.dao" targetProject="shnodemo/src/main/java" type="XMLMAPPER">
     	<property name="enableSubPackages" value="false" />
     </javaClientGenerator>
     <!-- tableName为对应的数据库表
     	domainObjectName是要生成的实体类
     	mapperName产生的map文件和dao接口名
     	enable*ByExample是否生成 example类   -->
-    <table tableName="v_cnpitable" domainObjectName="CnPi" mapperName="CnPiDao"
+    <table tableName="fourg_gc" domainObjectName="Gongcan" mapperName="GongcanDao"
     		enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false">
     </table>
   </context>

@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.cmdi.impl.EtoEIndexSumServiceImpl;
-
 /** 
  * @ClassName: ITest 
  * @Description: TODO
@@ -20,10 +18,10 @@ import com.cmdi.impl.EtoEIndexSumServiceImpl;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring-application.xml"})
 public class ITest {
-	@Autowired
-	private EtoEIndexSumServiceImpl e;
-	@Test
-	public void t1() throws Exception {
-		e.sum2table(new Date());
-	}
+//	@Autowired
+//	private EtoEIndexSumServiceImpl e;
+//	@Test
+//	public void t1() throws Exception {
+//		e.sum2table(new Date());
+//	}
 }
