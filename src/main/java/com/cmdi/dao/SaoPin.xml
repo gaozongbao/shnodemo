@@ -20,6 +20,50 @@
     	group by timestamp,longitude,latitude,earfcn
       )
     group by timestamp,longitude,latitude,earfcn,r0_rp
-</select>
+	</select>
+	
+	<insert id="insertsaopinaddrmastercell" parameterType="map">
+    INSERT INTO fourg_saopin_addr_mastercell(date,timestamp,longitude,latitude,earfcn,pci,rs,cellid)
+    VALUES
+	    <foreach collection="splist" item="item" index="index" separator=",">
+	      (
+	      #{date,jdbcType=VARCHAR},
+	      #{item.timestamp,jdbcType=VARCHAR},
+	      #{item.longitude,jdbcType=DOUBLE},
+	      #{item.latitude,jdbcType=DOUBLE},
+	      #{item.earfcn,jdbcType=INTEGER},
+	      #{item.pci,jdbcType=INTEGER},
+	      #{item.rs,jdbcType=DOUBLE},
+	      #{item.mastercellId,jdbcType=INTEGER}
+	      )
+	    </foreach>
+	</insert>
+	
+	<delete id="deletesaopinaddrmastercell" parameterType="map">
+    delete 
+    from fourg_saopin_addr_mastercell
+    where date=#{date,jdbcType=VARCHAR}
+	</delete>
+	
+	<insert id="insertmastercellcover" parameterType="map">
+    INSERT INTO fourg_mastercell_cover(date,earfcn,cellid,coverf100,coverf110,coverf120)
+    VALUES
+	    <foreach collection="coverlist" item="item" index="index" separator=",">
+	      (
+	      #{date,jdbcType=VARCHAR},
+	      #{item.earfcn,jdbcType=INTEGER},
+	      #{item.mastercellId,jdbcType=INTEGER},
+	      ROUND(#{item.countf100,jdbcType=DOUBLE}/#{item.countall,jdbcType=DOUBLE},4),
+		  ROUND(#{item.countf110,jdbcType=DOUBLE}/#{item.countall,jdbcType=DOUBLE},4),
+		  ROUND(#{item.countf120,jdbcType=DOUBLE}/#{item.countall,jdbcType=DOUBLE},4)
+	      )
+	    </foreach>
+	</insert>
+	
+	<delete id="deletemastercellcover" parameterType="map">
+    delete 
+    from fourg_mastercell_cover
+    where date=#{date,jdbcType=VARCHAR}
+	</delete>
 
 </mapper>

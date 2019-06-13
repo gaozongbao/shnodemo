@@ -1,6 +1,5 @@
 package com.cmdi.action;
 
-import java.awt.print.Printable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,85 +14,7 @@ import com.cmdi.model.CellAddr;
 import com.cmdi.model.CellIdAddr;
 import com.cmdi.model.SaoPinData;
 import com.cmdi.util.MapDistance;
-import com.sun.org.apache.xml.internal.security.Init;
 
-/**
- * @ClassName: SaoPinHandle
- * @Description: TODO
- * @author: 高宗宝
- * @date: 2019年6月13日
- * @version: 1.0
- */
-/** 
- * @ClassName: SaoPinHandle 
- * @Description: TODO
- * @author: 高宗宝
- * @date: 2019年6月13日
- * @version: 1.0 
- */
-/** 
- * @ClassName: SaoPinHandle 
- * @Description: TODO
- * @author: 高宗宝
- * @date: 2019年6月13日
- * @version: 1.0 
- */
-/** 
- * @ClassName: SaoPinHandle 
- * @Description: TODO
- * @author: 高宗宝
- * @date: 2019年6月13日
- * @version: 1.0 
- */
-/** 
- * @ClassName: SaoPinHandle 
- * @Description: TODO
- * @author: 高宗宝
- * @date: 2019年6月13日
- * @version: 1.0 
- */
-/** 
- * @ClassName: SaoPinHandle 
- * @Description: TODO
- * @author: 高宗宝
- * @date: 2019年6月13日
- * @version: 1.0 
- */
-/** 
- * @ClassName: SaoPinHandle 
- * @Description: TODO
- * @author: 高宗宝
- * @date: 2019年6月13日
- * @version: 1.0 
- */
-/** 
- * @ClassName: SaoPinHandle 
- * @Description: TODO
- * @author: 高宗宝
- * @date: 2019年6月13日
- * @version: 1.0 
- */
-/** 
- * @ClassName: SaoPinHandle 
- * @Description: TODO
- * @author: 高宗宝
- * @date: 2019年6月13日
- * @version: 1.0 
- */
-/** 
- * @ClassName: SaoPinHandle 
- * @Description: TODO
- * @author: 高宗宝
- * @date: 2019年6月13日
- * @version: 1.0 
- */
-/** 
- * @ClassName: SaoPinHandle 
- * @Description: TODO
- * @author: 高宗宝
- * @date: 2019年6月13日
- * @version: 1.0 
- */
 /** 
  * @ClassName: SaoPinHandle 
  * @Description: TODO
@@ -162,36 +83,69 @@ public class SaoPinHandle {
 				masterrsrp.put(idearfcn, list2);
 			}
 		}
+		input.put("date", "2019061011");
+		//导入数据之前删除旧数据
+		bean.delete("com.cmdi.dao.SaopinDao.deletesaopinaddrmastercell", input);
+		//每batchSize进行一次批量插入
+		int batchSize = 10000;
+		int page = allSaopinData.size() / batchSize;
+		for(int i = 0; i < page; i++) {
+			List<SaoPinData> sulist = allSaopinData.subList(0, batchSize);
+			input.put("splist", sulist);
+			bean.insert("com.cmdi.dao.SaopinDao.insertsaopinaddrmastercell", input);
+			sulist.clear();
+			System.out.println("ok " + i);
+		}
+		if(!allSaopinData.isEmpty()) {
+			input.put("splist", allSaopinData);
+			bean.insert("com.cmdi.dao.SaopinDao.insertsaopinaddrmastercell", input);
+			System.out.println("ok ");
+		}
+		allSaopinData.clear();
+		
 		
 		//所有小区所有频点的覆盖率,key=cellid:earfcn，value=int[3][earfncs]，第一行表示earfcn的值，第二行表示大于等于earfcn的个数，第三行表示小于earfcn的个数
-		HashMap<String, Integer[][]> mastercover = new HashMap<String, Integer[][]>();
+		HashMap<String, ArrayList<Integer>> mastercover = new HashMap<String, ArrayList<Integer>>();
 		
 		ArrayList<Integer> listthreshold = new ArrayList<Integer>();
-		listthreshold.add(-70);
-		listthreshold.add(-90);
+		listthreshold.add(-100);
 		listthreshold.add(-110);
+		listthreshold.add(-120);
 		
 		Set<Entry<String,ArrayList<Double>>> entrySet = masterrsrp.entrySet();
 		for (Entry<String, ArrayList<Double>> entry : entrySet) {
 			String masteridearfcn = entry.getKey();
-			Integer[][] integers = init(listthreshold);
+			ArrayList<Integer> thresholdcover = new ArrayList<Integer>();
+			for(int i = 0; i < listthreshold.size(); i++) {
+				thresholdcover.add(0);
+			}
+			thresholdcover.add(entry.getValue().size());
 			for(Double d: entry.getValue()) {
 				for(int i = 0; i < listthreshold.size(); i++) {
 					if(d >= listthreshold.get(i)) {
-						integers[1][i]++;
-					} else {
-						integers[2][i]++;
+						thresholdcover.set(i, thresholdcover.get(i) + 1);
 					}
 				}
 			}
-			mastercover.put(masteridearfcn, integers);
+			mastercover.put(masteridearfcn, thresholdcover);
 		}
 		
-		Set<Entry<String, Integer[][]>> entrySet2 = mastercover.entrySet();
-		for (Entry<String, Integer[][]> entry : entrySet2) {
-			System.out.println(entry.getKey());
-			print(entry.getValue());
+		ArrayList<SaoPinData> coverlist = new ArrayList<SaoPinData>();
+		for (Entry<String, ArrayList<Integer>> entry : mastercover.entrySet()) {
+			SaoPinData data = new SaoPinData();
+			data.setMastercellId(Integer.parseInt(entry.getKey().split(":")[0]));
+			data.setEarfcn(Integer.parseInt(entry.getKey().split(":")[1]));
+			data.setCountf100(entry.getValue().get(0));
+			data.setCountf110(entry.getValue().get(1));
+			data.setCountf120(entry.getValue().get(2));
+			data.setCountall(entry.getValue().get(3));
+			coverlist.add(data);
 		}
+		input.put("coverlist", coverlist);
+		//导入数据之前删除旧数据
+		bean.delete("com.cmdi.dao.SaopinDao.deletemastercellcover", input);
+		//如果数据量多，可以考虑多次批量插入
+		bean.insert("com.cmdi.dao.SaopinDao.insertmastercellcover", input);
 		context.close();
 	}
 
@@ -236,15 +190,4 @@ public class SaoPinHandle {
 			System.out.println();
 		}
 	}
-	
-	public static Integer[][] init(ArrayList<Integer> listthreshold) {
-		Integer[][] coverres = new Integer[3][listthreshold.size()];
-		for(int i = 0; i < listthreshold.size(); i++) {
-			coverres[0][i] = listthreshold.get(i);
-			coverres[1][i] = 0;
-			coverres[2][i] = 0;
-		}
-		return coverres;
-	}
-
 }

@@ -8,6 +8,24 @@ package com.cmdi.model;
  * @version: 1.0 
  */
 public class SaoPinData {
+	public Integer getCountf100() {
+		return countf100;
+	}
+	public void setCountf100(Integer countf100) {
+		this.countf100 = countf100;
+	}
+	public Integer getCountf110() {
+		return countf110;
+	}
+	public void setCountf110(Integer countf110) {
+		this.countf110 = countf110;
+	}
+	public Integer getCountf120() {
+		return countf120;
+	}
+	public void setCountf120(Integer countf120) {
+		this.countf120 = countf120;
+	}
 	private Integer pci;
 	private String timestamp;
 	private Double longitude;
@@ -16,6 +34,17 @@ public class SaoPinData {
 	private Double rs;
 	private Integer mastercellId;
 	
+	private Integer countf100;
+	private Integer countf110;
+	private Integer countf120;
+	private Integer countall;
+	
+	public Integer getCountall() {
+		return countall;
+	}
+	public void setCountall(Integer countall) {
+		this.countall = countall;
+	}
 	public Integer getMastercellId() {
 		return mastercellId;
 	}
