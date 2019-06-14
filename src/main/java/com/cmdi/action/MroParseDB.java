@@ -17,6 +17,7 @@ import com.cmdi.model.CellAddr;
 import com.cmdi.model.CellIdAddr;
 import com.cmdi.model.SaoPinData;
 import com.cmdi.thread.XmlHandleThread;
+import com.cmdi.util.LogUtil;
 import com.cmdi.util.MapDistance;
 
 /** 
@@ -30,9 +31,10 @@ public class MroParseDB {
 	private static Logger logger = Logger.getLogger(MroParseDB.class);
 	public static void main(String[] args) {
 		if(args.length != 2) {
-			logger.error("error, call java -cp xxx.jar com.cmdi.action.MroParseDB inputpath outputpath");
+			System.out.println("error, call java -cp xxx.jar com.cmdi.action.MroParseDB inputpath outputpath");
 			System.exit(0);
 		}
+		LogUtil.initLog4j(args[1], "sh");
 		File inPut = new File(args[0]);
 		File outPut = new File(args[1]);
 		if(!inPut.exists() || !inPut.isDirectory() || !outPut.exists() || !outPut.isDirectory()) {

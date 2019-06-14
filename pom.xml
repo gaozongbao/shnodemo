@@ -1,19 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.cmdi</groupId>
-  <artifactId>shnodemo</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  
-  <properties>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.cmdi</groupId>
+	<artifactId>shnodemo</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<properties>
 		<!-- 文件拷贝时的编码 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- 编译时的编码 -->
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 	</properties>
-	
+
 	<dependencies>
-		
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -67,7 +68,7 @@
 			<artifactId>spring-jdbc</artifactId>
 			<version>4.1.7.RELEASE</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -90,59 +91,81 @@
 			<artifactId>commons-logging</artifactId>
 			<version>1.1</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml</artifactId>
-		    <version>3.17</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.17</version>
 		</dependency>
-		
-  		
-  		<dependency>
+
+
+		<dependency>
 			<groupId>net.sourceforge.javacsv</groupId>
 			<artifactId>javacsv</artifactId>
 			<version>2.0</version>
 		</dependency>
-  		
-  		<dependency>
-           <groupId>net.sourceforge.jchardet</groupId>
-           <artifactId>jchardet</artifactId>
-           <version>1.0</version>
-       </dependency>
-       
-       <dependency>
+
+		<dependency>
+			<groupId>net.sourceforge.jchardet</groupId>
+			<artifactId>jchardet</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
 			<groupId>net.sf.json-lib</groupId>
 			<artifactId>json-lib</artifactId>
 			<version>2.4</version>
 			<classifier>jdk15</classifier>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
 		<dependency>
-		    <groupId>commons-net</groupId>
-		    <artifactId>commons-net</artifactId>
-		    <version>3.3</version>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>3.3</version>
 		</dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+		<!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
 		<dependency>
-		    <groupId>com.alibaba</groupId>
-		    <artifactId>fastjson</artifactId>
-		    <version>1.2.44</version>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.44</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/dom4j/dom4j -->
-        <dependency>
-            <groupId>dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-		
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+
 	</dependencies>
-	
-	
+
+
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.properties</include>
+                    <include>**/*.yml</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.tld</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.properties</include>
+                    <include>**/*.yml</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.tld</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -153,34 +176,34 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			<plugin>  
-			    <groupId>org.apache.maven.plugins</groupId>  
-			    <artifactId>maven-shade-plugin</artifactId>  
-			    <version>1.7.1</version>  
-			    <executions>  
-			        <execution>  
-			            <phase>package</phase>  
-			            <goals>  
-			                <goal>shade</goal>  
-			            </goals>  
-			            <configuration>  
-			                <transformers>  
-			                    <transformer  
-			                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">  
-			                        <resource>META-INF/spring.handlers</resource>  
-			                    </transformer>  
-			                    <transformer  
-			                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">  
-			                        <resource>META-INF/spring.schemas</resource>  
-			                    </transformer>  
-			                    <transformer  
-			                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">  
-			                        <mainClass>com.cmdi.action.MainWithTrans</mainClass>  
-			                    </transformer>  
-			                </transformers>  
-			            </configuration>  
-			        </execution>  
-			    </executions>  
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.7.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/spring.handlers</resource>
+								</transformer>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/spring.schemas</resource>
+								</transformer>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>com.cmdi.action.MainWithTrans</mainClass>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
