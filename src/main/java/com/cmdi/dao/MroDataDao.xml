@@ -5,13 +5,14 @@
   <resultMap type="com.cmdi.model.SaoPinData" id="selectsaopindatamap"></resultMap>
 	
 	<insert id="insertmrocelldata" parameterType="map">
-    INSERT INTO fourg_mro_cell(date,timestamp,cgi,enbid,earfcn,pci,scrsrp,sctadv,scaoa)
+    INSERT INTO fourg_mro_cell(date,timestamp,cgi,indexid,enbid,earfcn,pci,scrsrp,sctadv,scaoa)
     VALUES
 	    <foreach collection="mrolist" item="item" index="index" separator=",">
 	      (
 	      #{date,jdbcType=VARCHAR},
 	      #{ts,jdbcType=VARCHAR},
 	      #{item.cgi,jdbcType=VARCHAR},
+	      #{item.index,jdbcType=VARCHAR},
 	      #{item.enbId,jdbcType=INTEGER},
 	      #{item.lteScEarfcn,jdbcType=INTEGER},
 	      #{item.lteScPci,jdbcType=INTEGER},
@@ -27,5 +28,24 @@
     from fourg_mro_cell
     where date=#{date,jdbcType=VARCHAR}
 	</delete>
+	
+	<insert id="getmrocellcover" parameterType="map">
+	insert into fourg_mro_cell_cover(date,cgi,cgiid,indexid,coverf100,coverf110,coverf120)
+		select #{date,jdbcType=VARCHAR} as date,a.cgi,b.id,a.indexid,a.coverf100,a.coverf110,a.coverf120 
+		from
+			(
+			SELECT cgi,indexid,
+				round(count(if(scrsrp >= -100,true,null))/count(id),4) as coverf100,
+				round(count(if(scrsrp >= -110,true,null))/count(id),4) as coverf110,
+				round(count(if(scrsrp >= -120,true,null))/count(id),4) as coverf120
+			FROM `fourg_mro_cell` group by cgi,indexid
+			) a,
+			(
+			select id,cgi
+			from fourg_gc 
+			where carrierffrequencynum in (37900,38400)
+			) b
+		where a.cgi = b.cgi
+	</insert>
 
 </mapper>

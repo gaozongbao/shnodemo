@@ -48,13 +48,21 @@ public class XmlParse {
 				Element object = (Element) objectIterator.next();
 				scMeasureMasterCell.setEnbId(enbId);
 				Integer eci = MroUtil.toInt(object.attributeValue("id"));
+				if(eci < 0)
+					continue;
+				int index = eci % 256 % 3;
+				if(index == 0)
+					index = 3;
+				scMeasureMasterCell.setIndex(index);
 				scMeasureMasterCell.setEci(eci);
 				scMeasureMasterCell.setCgi("460-00-" + enbId + "-" + (eci - enbId * 256));
 				scMeasureMasterCell.setMmeUeS1apId(MroUtil.toInt(object.attributeValue("MmeUeS1apId")));
 				// 取每个obj中的第一条v
 				Element v = object.element("v");
 				vToScNcmeasure(v, smrIndex, scMeasureMasterCell);
-				arrayList.add(scMeasureMasterCell);
+				if(scMeasureMasterCell.getLteScEarfcn() == 37900 || scMeasureMasterCell.getLteScEarfcn() == 38400) {
+					arrayList.add(scMeasureMasterCell);
+				}
 			}
 			smrIndex.clear();
 		}
@@ -80,7 +88,8 @@ public class XmlParse {
 	protected static void vToScNcmeasure(Element v, HashMap<String, Integer> index, ScMeasureMasterCell scMeasureMasterCell) {
 		String[] vs = v.getStringValue().trim().split("\\s+", -1);
 		
-		scMeasureMasterCell.setLteScRSRP(MroUtil.toInt(vs[index.get("MR.LteScRSRP")]));
+		//减140就是dbm
+		scMeasureMasterCell.setLteScRSRP(MroUtil.toInt(vs[index.get("MR.LteScRSRP")]) - 140);
 
 		scMeasureMasterCell.setLteScTadv(MroUtil.toInt(vs[index.get("MR.LteScTadv")]));
 

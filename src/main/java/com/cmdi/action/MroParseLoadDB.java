@@ -20,6 +20,7 @@ import com.cmdi.model.CellAddr;
 import com.cmdi.model.CellIdAddr;
 import com.cmdi.model.GlobalConfig;
 import com.cmdi.model.SaoPinData;
+import com.cmdi.thread.XmlHandleLoadThread;
 import com.cmdi.thread.XmlHandleThread;
 import com.cmdi.util.LogUtil;
 import com.cmdi.util.MapDistance;
@@ -31,8 +32,8 @@ import com.cmdi.util.MapDistance;
  * @date: 2019年6月13日
  * @version: 1.0 
  */
-public class MroParseDB {
-	private static Logger logger = Logger.getLogger(MroParseDB.class);
+public class MroParseLoadDB {
+	private static Logger logger = Logger.getLogger(MroParseLoadDB.class);
 	public static void main(String[] args) {
 		if(args.length != 3) {
 			System.out.println("error, call java -cp xxx.jar com.cmdi.action.MroParseDB inputpath outputpath threadcount");
@@ -46,10 +47,13 @@ public class MroParseDB {
 			System.exit(0);
 		}
 		
-		//ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 2);
-		int threadNum = Integer.parseInt(args[2]);
-		
 		File[] listFiles = inPut.listFiles();
+		
+		int threadNum = Integer.parseInt(args[2]);
+		//ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 2);
+		ThreadPoolExecutor pool = new ThreadPoolExecutor(threadNum, threadNum, 
+				5, TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(listFiles.length));
+		
 		logger.info(inPut + " include " + listFiles.length + " files");
 		
 		
@@ -61,37 +65,9 @@ public class MroParseDB {
 		int delete = bean.delete("com.cmdi.dao.MroDataDao.deletemrocelldata", input);
 		logger.info("delete old mro data count=" + delete);
 		
-		ArrayList<File> arrayList = new ArrayList<File>();
+		int count = 0;
 		for(File gzFile : listFiles) {
-			arrayList.add(gzFile);
-		}
-		int batchSize = 1000;
-		int page = arrayList.size() / batchSize;
-		for(int jj = 0; jj < page; jj++) {
-			List<File> subList = arrayList.subList(0, batchSize);
-			logger.info("start batch, jj=" + jj);
-			doBatch(jj, batchSize, subList, threadNum, context);
-			subList.clear();
-			logger.info("batch ok, jj=" + jj);
-		}
-		if(!arrayList.isEmpty()) {
-			logger.info("start batch, jj=" + page);
-			doBatch(page, batchSize, arrayList, threadNum, context);
-			arrayList.clear();
-			logger.info("batch ok, jj=" + page);
-		}
-		
-		
-		
-		logger.info("task done");
-	}
-	
-	public static void doBatch(int currentBatch, int batchSize, List<File> list, int threadNum, ClassPathXmlApplicationContext context) {
-		ThreadPoolExecutor pool = new ThreadPoolExecutor(threadNum, threadNum, 
-				5, TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(list.size()));
-		int i = 0;
-		for (File gzfile : list) {
-			i++;
+			count++;
 			long completedTaskCount = pool.getCompletedTaskCount();
 			long taskCount = pool.getTaskCount();
 			long poolSize = pool.getPoolSize();
@@ -112,18 +88,17 @@ public class MroParseDB {
 					break;
 				}
 			}
-//			logger.info("fileNum=" + (currentBatch * batchSize + i));
-			//pool.execute(new XmlHandleThread(gzfile, context, i));
-			pool.execute(new XmlHandleThread(gzfile, context, currentBatch * batchSize + i));
-		}
-		pool.shutdown();
-		while(!pool.isTerminated()){
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			pool.execute(new XmlHandleLoadThread(gzFile, context, count));
+			pool.shutdown();
+			while(!pool.isTerminated()){
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-		}
+		}	
+		logger.info("task done");
 	}
 }
