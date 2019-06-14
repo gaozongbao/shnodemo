@@ -6,5 +6,6 @@
     <mappers>  
         <mapper resource="com/cmdi/dao/Saopin.xml"/>
         <mapper resource="com/cmdi/dao/GongcanDao.xml"/>
+        <mapper resource="com/cmdi/dao/MroDataDao.xml"/>
     </mappers>
 </configuration>

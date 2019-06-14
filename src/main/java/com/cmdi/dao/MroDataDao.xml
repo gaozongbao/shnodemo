@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmdi.dao.MroDataDao">
+
+  <resultMap type="com.cmdi.model.SaoPinData" id="selectsaopindatamap"></resultMap>
+	
+	<insert id="insertmrocelldata" parameterType="map">
+    INSERT INTO fourg_mro_cell(date,timestamp,cgi,enbid,earfcn,pci,scrsrp,sctadv,scaoa)
+    VALUES
+	    <foreach collection="mrolist" item="item" index="index" separator=",">
+	      (
+	      #{date,jdbcType=VARCHAR},
+	      #{ts,jdbcType=VARCHAR},
+	      #{item.cgi,jdbcType=VARCHAR},
+	      #{item.enbId,jdbcType=INTEGER},
+	      #{item.lteScEarfcn,jdbcType=INTEGER},
+	      #{item.lteScPci,jdbcType=INTEGER},
+	      #{item.lteScRSRP,jdbcType=DOUBLE},
+	      #{item.lteScTadv,jdbcType=DOUBLE},
+	      #{item.lteScAOA,jdbcType=DOUBLE}
+	      )
+	    </foreach>
+	</insert>
+	
+	<delete id="deletemrocelldata" parameterType="map">
+    delete 
+    from fourg_mro_cell
+    where date=#{date,jdbcType=VARCHAR}
+	</delete>
+
+</mapper>
