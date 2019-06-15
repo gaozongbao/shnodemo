@@ -17,7 +17,16 @@ public class ScMeasureMasterCell {
     Integer lteScRSRP;
     Integer lteScTadv;
     Integer lteScAOA;
+    Integer index;
 	
+	public Integer getIndex() {
+		return index;
+	}
+
+	public void setIndex(Integer index) {
+		this.index = index;
+	}
+
 	public Integer getMmeUeS1apId() {
 		return MmeUeS1apId;
 	}
@@ -94,7 +103,7 @@ public class ScMeasureMasterCell {
 	public String toString() {
 		return "ScMeasureMasterCell [MmeUeS1apId=" + MmeUeS1apId + ", cgi=" + cgi + ", enbId=" + enbId + ", eci=" + eci
 				+ ", lteScEarfcn=" + lteScEarfcn + ", lteScPci=" + lteScPci + ", lteScRSRP=" + lteScRSRP
-				+ ", lteScTadv=" + lteScTadv + ", lteScAOA=" + lteScAOA + "]";
+				+ ", lteScTadv=" + lteScTadv + ", lteScAOA=" + lteScAOA + ", index=" + index + "]";
 	}
 
 }

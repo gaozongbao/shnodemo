@@ -2,10 +2,13 @@
 <!DOCTYPE configuration PUBLIC  
     "-//mybatis.org//DTD Config 3.0//EN"  
     "http://mybatis.org/dtd/mybatis-3-config.dtd">  
-<configuration>  
-    <mappers>  
-        <mapper resource="com/cmdi/dao/Saopin.xml"/>
-        <mapper resource="com/cmdi/dao/GongcanDao.xml"/>
-        <mapper resource="com/cmdi/dao/MroDataDao.xml"/>
-    </mappers>
+<configuration>
+	<settings>  
+		<setting name="cacheEnabled" value="true"/>
+	</settings>   
+<!--     <mappers>  
+        <mapper resource="daoxml/Saopin.xml"/>
+        <mapper resource="daoxml/GongcanDao.xml"/>
+        <mapper resource="daoxml/MroDataDao.xml"/>
+    </mappers> -->
 </configuration>

@@ -31,7 +31,6 @@
 		<property name="locations">
 			<list> 
 				<value>jdbc.properties</value>
-				<value>activemq.properties</value>
 			</list>
 		</property>
 		<property name="ignoreUnresolvablePlaceholders" value="true"></property>
@@ -51,7 +50,8 @@
 		<!-- 指定数据源 --> 
        <property name="dataSource" ref="jdbcDataSource"/>
         <!-- 指定mybatis配置文件 --> 
-       <property name="configLocation" value="mybatis-config.xml"/> 
+       <property name="configLocation" value="mybatis-config.xml"/>
+       <property name="mapperLocations" value="classpath:com/cmdi/dao/**/*.xml"></property> 
     </bean>
 	
 	<!-- spring自动扫描dao接口所在的包 -->
