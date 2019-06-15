@@ -56,7 +56,7 @@ public class XmlParse {
 				scMeasureMasterCell.setIndex(index);
 				scMeasureMasterCell.setEci(eci);
 				scMeasureMasterCell.setCgi("460-00-" + enbId + "-" + (eci - enbId * 256));
-				scMeasureMasterCell.setMmeUeS1apId(MroUtil.toInt(object.attributeValue("MmeUeS1apId")));
+//				scMeasureMasterCell.setMmeUeS1apId(MroUtil.toInt(object.attributeValue("MmeUeS1apId")));
 				// 取每个obj中的第一条v
 				Element v = object.element("v");
 				vToScNcmeasure(v, smrIndex, scMeasureMasterCell);

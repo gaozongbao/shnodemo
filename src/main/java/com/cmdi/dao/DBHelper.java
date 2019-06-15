@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.cmdi.model.mro.ScMeasureMasterCell;
 
@@ -24,7 +26,8 @@ import com.cmdi.model.mro.ScMeasureMasterCell;
  * @date: 2019年6月14日
  * @version: 1.0 
  */
-@Configuration
+@Component
+@Scope("prototype")
 public class DBHelper {
 	@Value("${jdbc.mysql.driverClassName}")
 	private String driver;
@@ -36,6 +39,21 @@ public class DBHelper {
 	private String passWd;
 	
 	private Connection connection;
+	
+	
+
+	public DBHelper() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public DBHelper(String driver, String dburl, String userName, String passWd) {
+		super();
+		this.driver = driver;
+		this.dburl = dburl;
+		this.userName = userName;
+		this.passWd = passWd;
+	}
 
 	public Connection initDB() {
 		try {
@@ -98,7 +116,7 @@ public class DBHelper {
 	public int load2(ArrayList<ScMeasureMasterCell> arrayList, String tableName, String encoder, String delimiter, String ts) {
 		int cnt = 0;
 		PreparedStatement preparedStatement  = null;
-		String sql = "load data local infile '' " + " ignore into table "+ tableName + " character set "+encoder+ " fields terminated by '"+delimiter+"' enclosed by ''";
+		String sql = "load data local infile '' " + " ignore into table "+ tableName + " character set "+encoder+ " fields terminated by '"+delimiter+"' enclosed by '' (date,timestamp,cgi,indexid,enbid,earfcn,pci,scrsrp,sctadv,scaoa)";
 		ByteArrayInputStream is = null;
 		try {
 			connection.setAutoCommit(false);
@@ -121,6 +139,7 @@ public class DBHelper {
 			((com.mysql.jdbc.Statement) preparedStatement).setLocalInfileInputStream(is);
 			cnt = preparedStatement.executeUpdate();
 			connection.commit();
+			sb.setLength(0);
 			is.close();
 			
 		} catch (SQLException e) {
@@ -142,5 +161,18 @@ public class DBHelper {
 			}
 		}
 		return cnt;
+	}
+	
+	public static void main(String[] args) {
+		DBHelper dbHelper = new DBHelper("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/sh45g?useUnicode=true&characterEncoding=UTF-8", "root", "cmdi1234");
+		dbHelper.initDB();
+		System.out.println(dbHelper.connection);
+		
+	}
+
+	@Override
+	public String toString() {
+		return "DBHelper [driver=" + driver + ", dburl=" + dburl + ", userName=" + userName + ", passWd=" + passWd
+				+ ", connection=" + connection + "]";
 	}
 }
