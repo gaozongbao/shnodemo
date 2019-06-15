@@ -73,7 +73,7 @@ public class SaoPinHandle {
 			CellIdAddr masterCellIdAddr = getMasterCellIdByMinDistance(saoPinData.getLongitude(), saoPinData.getLatitude(), list);
 			saoPinData.setMastercellId(masterCellIdAddr.getCellid());
 //			System.out.println(saoPinData);
-			//获取每个小区的所有频点的rsrp值
+			//获取每个小区的所有频点的rsrp值  用来统计覆盖率
 			String idearfcn=masterCellIdAddr.getCellid() + ":" + saoPinData.getEarfcn();
 			if(masterrsrp.containsKey(idearfcn)) {
 				masterrsrp.get(idearfcn).add(saoPinData.getRs());
@@ -116,10 +116,12 @@ public class SaoPinHandle {
 		for (Entry<String, ArrayList<Double>> entry : entrySet) {
 			String masteridearfcn = entry.getKey();
 			ArrayList<Integer> thresholdcover = new ArrayList<Integer>();
+			//初始化每个门限的值 ，若有符合门限的采样点 则+1
 			for(int i = 0; i < listthreshold.size(); i++) {
 				thresholdcover.add(0);
 			}
 			thresholdcover.add(entry.getValue().size());
+
 			for(Double d: entry.getValue()) {
 				for(int i = 0; i < listthreshold.size(); i++) {
 					if(d >= listthreshold.get(i)) {
