@@ -40,7 +40,12 @@ public class XmlHandleLoadThread implements Runnable {
 			logger.info("warking on filenum=" + currentnum);
 			GZIPInputStream gzipInputStream = null;
 			try {
-				String ts = file.getName().split("_", -1)[5];
+				String ts = null;
+				try {
+					ts = file.getName().split("_", -1)[5].substring(0, 14);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
 				gzipInputStream = new GZIPInputStream(new FileInputStream(file));
 				ArrayList<ScMeasureMasterCell> arrayList = XmlParse.parseByDom4j(gzipInputStream, "UTF-8");
 				
@@ -48,13 +53,26 @@ public class XmlHandleLoadThread implements Runnable {
 					logger.warn("no right data");
 					return;
 				}
-				
-				DBHelper helper = context.getBean(DBHelper.class);
-				helper.initDB();
-				int load2 = helper.load2(arrayList, "fourg_mro_cell", "utf8", "|", ts);
-				helper.closeConn();
-				logger.info("insert mro data count=" + load2);
-				
+				System.err.println(arrayList.size());
+				if(arrayList.size() <= 300000) {
+//					long start = System.currentTimeMillis();
+					HashMap<String, Object> input = new HashMap<String, Object>();
+					input.put("date", "20190610");
+					input.put("ts", ts);
+					input.put("mrolist", arrayList);
+					SqlSessionTemplate bean = context.getBean("sqlSessionTemplate", SqlSessionTemplate.class);
+					int insert = bean.insert("com.cmdi.dao.MroDataDao.insertmrocelldata", input);
+					logger.info("insert mro data count=" + insert);
+//					System.out.println("inserttime=" + ((System.currentTimeMillis() - start) / 1000.0));
+				} else {
+//					long start = System.currentTimeMillis();
+					DBHelper helper = context.getBean(DBHelper.class);
+					helper.initDB();
+					int load2 = helper.load2(arrayList, "fourg_mro_cell", "utf8", "|", ts);
+					helper.closeConn();
+					logger.info("load mro data count=" + load2);
+//					System.out.println("loadtime=" + ((System.currentTimeMillis() - start) / 1000.0));
+				}
 				gzipInputStream.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
