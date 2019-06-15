@@ -9,6 +9,8 @@ public class LteAndFiveGDataImportMain {
     public static void main(String[] args) {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-application.xml");
         LteDataImportService bean = context.getBean("lteDataImportService", LteDataImportService.class);
-        bean.importLteSaoPinData("D:\\其他公司\\上海设计院\\地铁\\45g模块\\4G扫频数据.csv");
+        bean.importLteSaoPinData("D:\\其他公司\\上海设计院\\地铁\\45g模块\\4G扫频数据.csv","5g");
+       // bean.importGcData("D:\\其他公司\\上海设计院\\地铁\\45g模块\\five.csv");
+        context.close();
     }
 }

@@ -26,8 +26,8 @@
     <result column="direction" jdbcType="VARCHAR" property="direction" />
   </resultMap>
 
-  <insert id="insertSwSaopinAddr" parameterType="java.util.List">
-    INSERT INTO fourg_saopin_addr (`date`,`timestamp`,longitude,latitude,earfcn,pci,sss_rssi,sss_rp,r0_rp,r0_rq,r0_cinr,timing,operator,pattern)
+  <insert id="insertSwSaopinAddr" parameterType="map" >
+    INSERT INTO ${tableName} (`date`,`timestamp`,longitude,latitude,earfcn,pci,sss_rssi,sss_rp,r0_rp,r0_rq,r0_cinr,timing,operator,pattern)
     VALUES
     <foreach collection="list" item="item" index="index" separator=",">
       (
@@ -38,4 +38,25 @@
     </foreach>
 
   </insert>
+  <update id="deleteSwSaopinAddr">
+    DELETE FROM ${tableName}
+    WHERE `date`=#{date}
+
+  </update>
+
+  <insert id="insert5gGc" parameterType="java.util.List">
+    INSERT INTO fiveg_gc
+    (districtandcounty,gnodeb,cellname,localcellid,longitude,latitude,workfrequencyband,centerfrequency,cellbandwidth,cellpower,electronictiltangle,mechanicaltiltangle,totaldowntiltangle,azimuth,antennaheight,grid)
+    VALUES
+    <foreach collection="list" item="item" index="index" separator=",">
+      (
+      #{item.districtandcounty}, #{item.gnodeb},#{item.cellname},#{item.localcellid},#{item.longitude},#{item.latitude},
+      #{item.workfrequencyband},#{item.centerfrequency},#{item.cellbandwidth},#{item.cellpower},#{item.electronictiltangle},#{item.mechanicaltiltangle} ,#{item.totaldowntiltangle},#{item.azimuth},#{item.antennaheight},#{item.grid}
+      )
+    </foreach>
+
+  </insert>
+
+
+
 </mapper>

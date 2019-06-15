@@ -19,19 +19,32 @@ public class LteDataImportService {
     @Autowired
     private FourSaopinAddrDao fourSaopinAddrDao;
 
-    public void importLteSaoPinData(String filePath){
+    public void importLteSaoPinData(String filePath,String type){//type 值为 4g/5g
         if(StringUtils.isNotBlank(filePath)){
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String today = sdf.format(new Date());
+            today="2019-06-13";
+            //先把旧数据删除
+            String tableName="";
+            if("4g".equals(type)){
+                tableName="fourg_saopin_addr";
+            }else if("5g".equals(type)){
+                tableName="fiveg_saopin_addr";
+            }else{
+                throw new RuntimeException("导入类型有误");
+            }
 
+            //删除旧数据
+            fourSaopinAddrDao.deleteSwSaopinAddr(today,tableName);
 
             DealCSV deal = new DealCSV();
-            System.out.println("lte 扫频数据录入");
+            System.out.println(type+" 扫频数据录入");
             SaoPinHandler saoPinHandler = new SaoPinHandler();
             saoPinHandler.setToday(today);
+            saoPinHandler.setTableName(tableName);
             saoPinHandler.setFourSaopinAddrDao(fourSaopinAddrDao);
             deal.process(filePath,saoPinHandler);
-
+            System.out.println(type+" 扫频数据录入完毕!!!!!");
 
         }else{
             throw new RuntimeException("没有找到入库文件");
@@ -39,12 +52,58 @@ public class LteDataImportService {
 
     }
 
+    public void importGcData(String filePath){
+        if(StringUtils.isNotBlank(filePath)){
+            DealCSV deal = new DealCSV();
+            System.out.println("lte 扫频数据录入");
+            GcHandler handler = new GcHandler();
+            handler.setFourSaopinAddrDao(fourSaopinAddrDao);
+            deal.process(filePath,handler);
+        }else{
+            throw new RuntimeException("没有找到入库文件");
+        }
+
+    }
 
 }
+class GcHandler implements CSVHandler{
+    private FourSaopinAddrDao fourSaopinAddrDao;
+    @Override
+    public void getData(int num, List<String[]> res) {
+        List<Map<String,Object>> inser = new ArrayList<>();
+        for(String [] item:res){
+            Map<String,Object> data = new HashMap<>();
+            data.put("districtandcounty",item[0]);
+            data.put("gnodeb",item[1]);
+            data.put("cellname",item[2]);
+            data.put("localcellid",item[3]);
+            data.put("longitude",Double.parseDouble(item[4]));
+            data.put("latitude",Double.parseDouble(item[5]));
+            data.put("workfrequencyband",item[6]);
+            data.put("centerfrequency",Integer.parseInt(item[7]));
+            data.put("cellbandwidth",Integer.parseInt(item[8].replace("M","")));
+            data.put("cellpower",Double.parseDouble(item[9].replace("dBm","")));
+            data.put("electronictiltangle",Double.parseDouble(item[10]));
+            data.put("mechanicaltiltangle",Double.parseDouble(item[11]));
+            data.put("totaldowntiltangle",Double.parseDouble(item[12]));
+            data.put("azimuth",Double.parseDouble(item[13]));
+            data.put("antennaheight",Double.parseDouble(item[14]));
+            data.put("grid",item[15]);
+            inser.add(data);
+        }
+        fourSaopinAddrDao.insert5gGc(inser);
+    }
+
+    public void setFourSaopinAddrDao(FourSaopinAddrDao fourSaopinAddrDao) {
+        this.fourSaopinAddrDao = fourSaopinAddrDao;
+    }
+}
+
 
 class SaoPinHandler implements CSVHandler {
     private FourSaopinAddrDao fourSaopinAddrDao;
     private String today;
+    private String tableName;
 
     private String currentTimeStamp;
     private Double currentLongitude;
@@ -127,7 +186,9 @@ class SaoPinHandler implements CSVHandler {
 
             data.add(sao);
         }
-        fourSaopinAddrDao.insertSwSaopinAddr(data);
+
+
+        fourSaopinAddrDao.insertSwSaopinAddr(data,tableName);
 
     }
 
@@ -135,8 +196,9 @@ class SaoPinHandler implements CSVHandler {
         this.today = today;
     }
 
-
-
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
 
     public void setFourSaopinAddrDao(FourSaopinAddrDao fourSaopinAddrDao) {
         this.fourSaopinAddrDao = fourSaopinAddrDao;
