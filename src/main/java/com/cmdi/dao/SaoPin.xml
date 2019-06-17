@@ -78,7 +78,7 @@
 	
 	<delete id="deletemastercellcover" parameterType="map">
     delete 
-    from fourg_mastercell_cover
+    from fourg_saopin_mastercell_cover
     where date=#{date,jdbcType=VARCHAR}
 	</delete>
 
