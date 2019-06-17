@@ -1,6 +1,7 @@
 package com.cmdi.impl;
 
 import com.cmdi.action.SaoPinHandle;
+import com.cmdi.dao.FivegMroDataDao;
 import com.cmdi.dao.FourSaopinAddrDao;
 import com.cmdi.model.FourSaopinAddr;
 import com.cmdi.util.CSVHandler;
@@ -20,6 +21,8 @@ import java.util.*;
 public class LteDataImportService {
     @Autowired
     private FourSaopinAddrDao fourSaopinAddrDao;
+    @Autowired
+    private FivegMroDataDao fivegMroDataDao;
     @Autowired
     private SaoPinHandle saoPinHandle;
 
@@ -81,12 +84,15 @@ public class LteDataImportService {
         //4g mro 分析 处理流程
         System.out.println("4g5gMro数据统计分析.....");
         String today="2019-06-13";
+        fivegMroDataDao.deleteMroAnalysis("fourg_mro_cell_cover",today);
         List<Integer> earfcn = new ArrayList<>();
         earfcn.add(37900);
         earfcn.add(38400);
-        fourSaopinAddrDao.analysisMroData(today,earfcn);
-
+        fivegMroDataDao.analysisMroData("fourg_mro_cell_cover","fourg_mro_cell",today,earfcn);
         //5g....
+
+        fivegMroDataDao.deleteMroAnalysis("fiveg_mro_cell_cover",today);
+        fivegMroDataDao.analysisMroData("fiveg_mro_cell_cover","fiveg_mro_cell",today,earfcn);
 
 
         System.out.println("4g5gMro数据统计分析完毕!!!!");

@@ -21,7 +21,7 @@ public class LteAndFiveGDataImportMain {
         bean.importLteSaoPinData("D:\\其他公司\\上海设计院\\地铁\\45g模块\\5G扫频数据-网格39.csv","5g");
 
         bean.analysisSaoPinData();
-       // bean.analysisMroData();
+
         //bean.importLteSaoPinData("D:\\其他公司\\上海设计院\\地铁\\45g模块\\4G扫频数据.csv","4g");
        // bean.importGcData("D:\\其他公司\\上海设计院\\地铁\\45g模块\\five.csv");
         context.close();

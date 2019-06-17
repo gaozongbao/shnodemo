@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmdi.dao.FivegMroDataDao">
+
+	<insert id="analysisMroData" >
+		INSERT INTO ${mroCoverTable} (`date`,cgi,cgiid,indexid,coverf100,coverf110,coverf120)
+		SELECT #{date} AS `date`,a.cgi,b.id,a.indexid,a.coverf100,a.coverf110,a.coverf120
+		FROM
+		(
+		SELECT cgi,indexid,
+		ROUND(COUNT(IF(scrsrp >= -100,TRUE,NULL))/COUNT(id),4) AS coverf100,
+		ROUND(COUNT(IF(scrsrp >= -110,TRUE,NULL))/COUNT(id),4) AS coverf110,
+		ROUND(COUNT(IF(scrsrp >= -120,TRUE,NULL))/COUNT(id),4) AS coverf120
+		FROM ${mroTable} GROUP BY cgi,indexid
+		) a,
+		(
+		SELECT id,cgi
+		FROM fourg_gc
+		WHERE carrierffrequencynum IN
+		<foreach collection="earfcn" item="item" open="(" separator=","  close=")">
+			#{item}
+		</foreach>
+		) b
+		WHERE a.cgi = b.cgi
+	</insert>
+	<update id="deleteMroAnalysis" >
+        delete from ${tableName} where `date`=#{data}
+    </update>
+
+  <insert id="insertEffectMroData" >
+	  insert into fiveg_mro_cell (date,timestamp,cgi,indexid,enbid,earfcn,pci,sctadv,scaoa,scrsrp)
+	  select date,timestamp,cgi,indexid,enbid,earfcn,pci,sctadv,scaoa,scrsrp+dd.diffvalue as scrsrp from
+	  (select a.*,b.azimuth,if(a.scaoa-azimuth>=0,a.scaoa-azimuth,a.scaoa-azimuth+360) as deg from
+	  (SELECT date,timestamp,cgi,indexid,enbid,earfcn,pci,scrsrp,sctadv,scaoa FROM `fourg_mro_cell`
+	  where cgi=#{cgi} and scaoa &lt;&gt; -999) a,fiveg_gc b
+	  where a.cgi=b.cgi) cc, fiveg_aoa_gain dd
+	  where cc.deg=dd.deg
+
+  </insert>
+  <insert id="insertunEffectMroData" >
+	  insert into fiveg_mro_cell (date,timestamp,cgi,indexid,enbid,earfcn,pci,sctadv,scaoa,scrsrp)
+	 SELECT date,timestamp,cgi,indexid,enbid,earfcn,pci,scrsrp,sctadv,scaoa,
+	scrsrp+(SELECT diffvalue FROM fiveg_aoa_gain_aopwrong  WHERE id >= (SELECT floor(RAND() * (SELECT MAX(id) FROM fiveg_aoa_gain_aopwrong))) ORDER BY id LIMIT 1) as scrsrp
+	FROM `fourg_mro_cell` where cgi=#{cgi} and scaoa = -999
+
+  </insert>
+  <select id="getUnEffectMroCgi" resultType="map">
+	  SELECT f.cgi FROM fourg_mro_cell f
+	  where f.scaoa=-999
+	  GROUP BY f.cgi
+  </select>
+	<select id="getEffectMroCgi" resultType="map">
+	  SELECT f.cgi FROM fourg_mro_cell f
+	  where f.scaoa &lt;&gt;-999
+	  GROUP BY f.cgi
+  </select>
+
+</mapper>

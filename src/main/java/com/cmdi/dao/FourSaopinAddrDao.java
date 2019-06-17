@@ -14,5 +14,5 @@ public interface FourSaopinAddrDao {
     public void insert5gGc(List<Map<String,Object>> list);
     public void deleteSwSaopinAddr(@Param("date") String date,@Param("tableName") String tableName,@Param("gridid") String gridid);
 
-    public void analysisMroData(@Param("date") String date,@Param("earfcn")List<Integer> earfcn);
+
 }

@@ -57,31 +57,7 @@
 
   </insert>
 
-  <insert id="analysisMroData" >
-    INSERT INTO fourg_mro_cell_cover(`date`,cgi,cgiid,indexid,coverf100,coverf110,coverf120)
-    SELECT #{date} AS `date`,a.cgi,b.id,a.indexid,a.coverf100,a.coverf110,a.coverf120
-    FROM
-     (
-     SELECT cgi,indexid,
-      ROUND(COUNT(IF(scrsrp >= -100,TRUE,NULL))/COUNT(id),4) AS coverf100,
-      ROUND(COUNT(IF(scrsrp >= -110,TRUE,NULL))/COUNT(id),4) AS coverf110,
-      ROUND(COUNT(IF(scrsrp >= -120,TRUE,NULL))/COUNT(id),4) AS coverf120
-     FROM `fourg_mro_cell` GROUP BY cgi,indexid
-     ) a,
-     (
-     SELECT id,cgi
-     FROM fourg_gc
-     WHERE carrierffrequencynum IN
-     <foreach collection="earfcn" item="item" open="(" separator=","  close=")">
-       #{item}
-     </foreach>
-     ) b
-    WHERE a.cgi = b.cgi
 
-  </insert>
-    <update id="deleteMroAnalysis" >
-        delete from
-    </update>
 
 
 
