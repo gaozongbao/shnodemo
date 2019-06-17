@@ -62,6 +62,15 @@ public class FourSaopinAddr {
     private String prbAntNo;
     private String operator;
     private String pattern;
+    private Integer gridid;
+
+    public Integer getGridid() {
+        return gridid;
+    }
+
+    public void setGridid(Integer gridid) {
+        this.gridid = gridid;
+    }
 
     /**
      * 获取id

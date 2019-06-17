@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -21,6 +22,9 @@ public class LteDataImportService {
 
     public void importLteSaoPinData(String filePath,String type){//type 值为 4g/5g
         if(StringUtils.isNotBlank(filePath)){
+            File f = new File(filePath);
+            String name = f.getName();
+            Integer gridid = Integer.parseInt(name.split("-")[1].replace("网格", "").replace(".csv",""));
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String today = sdf.format(new Date());
             today="2019-06-13";
@@ -35,16 +39,17 @@ public class LteDataImportService {
             }
 
             //删除旧数据
-            fourSaopinAddrDao.deleteSwSaopinAddr(today,tableName);
+            fourSaopinAddrDao.deleteSwSaopinAddr(today,tableName,gridid);
 
             DealCSV deal = new DealCSV();
-            System.out.println(type+" 扫频数据录入");
+            System.out.println(type+" 扫频数据录入---》文件:"+name);
             SaoPinHandler saoPinHandler = new SaoPinHandler();
             saoPinHandler.setToday(today);
             saoPinHandler.setTableName(tableName);
+            saoPinHandler.setGridid(gridid);
             saoPinHandler.setFourSaopinAddrDao(fourSaopinAddrDao);
             deal.process(filePath,saoPinHandler);
-            System.out.println(type+" 扫频数据录入完毕!!!!!");
+            System.out.println(type+" 扫频数据录入完毕!!!!!---》文件:"+name);
 
         }else{
             throw new RuntimeException("没有找到入库文件");
@@ -104,6 +109,7 @@ class SaoPinHandler implements CSVHandler {
     private FourSaopinAddrDao fourSaopinAddrDao;
     private String today;
     private String tableName;
+    private Integer gridid;
 
     private String currentTimeStamp;
     private Double currentLongitude;
@@ -141,6 +147,7 @@ class SaoPinHandler implements CSVHandler {
 
             FourSaopinAddr sao = new FourSaopinAddr();
             sao.setDate(today);
+            sao.setGridid(gridid);
             if(StringUtils.isNotBlank(item[0])){
                 currentTimeStamp=item[0];
             }
@@ -153,10 +160,14 @@ class SaoPinHandler implements CSVHandler {
             sao.setTimestamp(currentTimeStamp);
             sao.setLongitude(currentLongitude);
             sao.setLatitude(currentLatitude);
+
             if(StringUtils.isNotBlank(item[3])){
                 sao.setEarfcn(Integer.parseInt(item[3]));
-                sao.setOperator(keyMap.get(item[3]).split("-")[0]);
-                sao.setPattern(keyMap.get(item[3]).split("-")[1]);
+                if(keyMap.get(item[3])!=null){
+                    sao.setOperator(keyMap.get(item[3]).split("-")[0]);
+                    sao.setPattern(keyMap.get(item[3]).split("-")[1]);
+                }
+
 
             }
             if(StringUtils.isNotBlank(item[4])){
@@ -190,6 +201,10 @@ class SaoPinHandler implements CSVHandler {
 
         fourSaopinAddrDao.insertSwSaopinAddr(data,tableName);
 
+    }
+
+    public void setGridid(Integer gridid) {
+        this.gridid = gridid;
     }
 
     public void setToday(String today) {

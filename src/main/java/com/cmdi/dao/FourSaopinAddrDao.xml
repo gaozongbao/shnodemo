@@ -23,24 +23,24 @@
     <result column="prb_ant_no" jdbcType="VARCHAR" property="prbAntNo" />
     <result column="operator" jdbcType="VARCHAR" property="operator" />
     <result column="pattern" jdbcType="VARCHAR" property="pattern" />
-    <result column="direction" jdbcType="VARCHAR" property="direction" />
+    <result column="gridid" jdbcType="INTEGER" property="gridid" />
   </resultMap>
 
   <insert id="insertSwSaopinAddr" parameterType="map" >
-    INSERT INTO ${tableName} (`date`,`timestamp`,longitude,latitude,earfcn,pci,sss_rssi,sss_rp,r0_rp,r0_rq,r0_cinr,timing,operator,pattern)
+    INSERT INTO ${tableName} (`date`,`timestamp`,longitude,latitude,earfcn,pci,sss_rssi,sss_rp,r0_rp,r0_rq,r0_cinr,timing,operator,pattern,gridid)
     VALUES
     <foreach collection="list" item="item" index="index" separator=",">
       (
       #{item.date}, #{item.timestamp},#{item.longitude},#{item.latitude},
       #{item.earfcn},#{item.pci},#{item.sssRssi},#{item.sssRp},#{item.r0Rp},#{item.r0Rq},#{item.r0Cinr}
-      ,#{item.timing},#{item.operator},#{item.pattern}
+      ,#{item.timing},#{item.operator},#{item.pattern},#{item.gridid}
       )
     </foreach>
 
   </insert>
   <update id="deleteSwSaopinAddr">
     DELETE FROM ${tableName}
-    WHERE `date`=#{date}
+    WHERE `date`=#{date} and gridid=#{gridid}
 
   </update>
 
