@@ -39,7 +39,7 @@
   </insert>
   <insert id="insertunEffectMroData" >
 	  insert into fiveg_mro_cell (date,timestamp,cgi,indexid,enbid,earfcn,pci,sctadv,scaoa,scrsrp)
-	 SELECT date,timestamp,cgi,indexid,enbid,earfcn,pci,scrsrp,sctadv,scaoa,
+	 SELECT date,timestamp,cgi,indexid,enbid,earfcn,pci,sctadv,scaoa,
 	scrsrp+(SELECT diffvalue FROM fiveg_aoa_gain_aopwrong  WHERE id >= (SELECT floor(RAND() * (SELECT MAX(id) FROM fiveg_aoa_gain_aopwrong))) ORDER BY id LIMIT 1) as scrsrp
 	FROM `fourg_mro_cell` where cgi=#{cgi} and scaoa = -999
 
