@@ -4,8 +4,24 @@
 
   <resultMap type="com.cmdi.model.SaoPinData" id="selectsaopindatamap"></resultMap>
   <select id="selectsaopindata" parameterType="map" resultMap="selectsaopindatamap">
-  
-  	select timestamp,longitude,latitude,earfcn,r0_rp as rs,max(pci) as pci
+	  SELECT f.`timestamp`,f.longitude,f.latitude,f.earfcn,f.r0_rp as rs ,max(f.pci) pci
+	  FROM fourg_saopin_addr f
+	  LEFT JOIN (
+		  SELECT `timestamp`,longitude,latitude,earfcn,MAX(r0_rp) AS rs,GROUP_CONCAT(CONCAT_WS(':',f.pci,f.r0_rp)) pr
+		  FROM fourg_saopin_addr f
+		  WHERE pci IS NOT NULL AND longitude IS NOT NULL AND latitude IS NOT NULL
+		  GROUP BY `timestamp`,longitude,latitude,earfcn
+	  ) a ON  a.timestamp=f.timestamp AND a.longitude=f.longitude AND a.latitude=f.latitude AND a.earfcn=f.earfcn AND a.rs=f.r0_rp
+	  WHERE a.pr IS NOT NULL and f.pci is not null and f.longitude is not null and f.latitude is not null
+	  and f.earfcn in
+	  <foreach collection="earfcnlist" index="index" item="item" open="("
+			   separator="," close=")">
+		  #{item,jdbcType=INTEGER}
+	  </foreach>
+	  group by f.timestamp,f.longitude,f.latitude,f.earfcn,f.r0_rp
+
+
+	  <!--select timestamp,longitude,latitude,earfcn,r0_rp as rs,max(pci) as pci
   	from fourg_saopin_addr
   	where (timestamp,longitude,latitude,earfcn,r0_rp) in
       (
@@ -19,7 +35,7 @@
     		and pci is not null and longitude is not null and latitude is not null
     	group by timestamp,longitude,latitude,earfcn
       )
-    group by timestamp,longitude,latitude,earfcn,r0_rp
+    group by timestamp,longitude,latitude,earfcn,r0_rp-->
 	</select>
 	
 	<insert id="insertsaopinaddrmastercell" parameterType="map">
@@ -46,7 +62,7 @@
 	</delete>
 	
 	<insert id="insertmastercellcover" parameterType="map">
-    INSERT INTO fourg_mastercell_cover(date,earfcn,cellid,coverf100,coverf110,coverf120)
+    INSERT INTO fourg_saopin_mastercell_cover(date,earfcn,cellid,coverf100,coverf110,coverf120)
     VALUES
 	    <foreach collection="coverlist" item="item" index="index" separator=",">
 	      (
