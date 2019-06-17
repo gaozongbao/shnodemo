@@ -27,7 +27,7 @@ public class LteDataImportService {
         if(StringUtils.isNotBlank(filePath)){
             File f = new File(filePath);
             String name = f.getName();
-            Integer gridid = Integer.parseInt(name.split("-")[1].replace("网格", "").replace(".csv",""));
+            String gridid = name.split("-")[1].replace("网格", "").replace(".csv","");
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String today = sdf.format(new Date());
             today="2019-06-13";
@@ -142,7 +142,7 @@ class SaoPinHandler implements CSVHandler {
     private FourSaopinAddrDao fourSaopinAddrDao;
     private String today;
     private String tableName;
-    private Integer gridid;
+    private String gridid;
 
     private String currentTimeStamp;
     private Double currentLongitude;
@@ -236,7 +236,7 @@ class SaoPinHandler implements CSVHandler {
 
     }
 
-    public void setGridid(Integer gridid) {
+    public void setGridid(String gridid) {
         this.gridid = gridid;
     }
 

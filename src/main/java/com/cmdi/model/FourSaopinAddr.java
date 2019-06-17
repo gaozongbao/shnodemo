@@ -62,13 +62,13 @@ public class FourSaopinAddr {
     private String prbAntNo;
     private String operator;
     private String pattern;
-    private Integer gridid;
+    private String gridid;
 
-    public Integer getGridid() {
+    public String getGridid() {
         return gridid;
     }
 
-    public void setGridid(Integer gridid) {
+    public void setGridid(String gridid) {
         this.gridid = gridid;
     }
 

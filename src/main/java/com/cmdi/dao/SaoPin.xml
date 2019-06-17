@@ -36,7 +36,7 @@
 	      #{item.pci,jdbcType=INTEGER},
 	      #{item.rs,jdbcType=DOUBLE},
 	      #{item.mastercellId,jdbcType=INTEGER},
-	      #{item.gridid,jdbcType=INTEGER}
+	      #{item.gridid,jdbcType=VARCHAR}
 	      )
 	    </foreach>
 	</insert>
