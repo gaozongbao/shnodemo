@@ -1,5 +1,6 @@
 package com.cmdi.impl;
 
+import com.cmdi.action.SaoPinHandle;
 import com.cmdi.dao.FourSaopinAddrDao;
 import com.cmdi.model.FourSaopinAddr;
 import com.cmdi.util.CSVHandler;
@@ -19,6 +20,8 @@ import java.util.*;
 public class LteDataImportService {
     @Autowired
     private FourSaopinAddrDao fourSaopinAddrDao;
+    @Autowired
+    private SaoPinHandle saoPinHandle;
 
     public void importLteSaoPinData(String filePath,String type){//type 值为 4g/5g
         if(StringUtils.isNotBlank(filePath)){
@@ -67,6 +70,36 @@ public class LteDataImportService {
         }else{
             throw new RuntimeException("没有找到入库文件");
         }
+
+    }
+
+    /**
+     * 分析 4 5g mro 数据
+     *
+     * */
+    public void analysisMroData(){
+        //4g mro 分析 处理流程
+        System.out.println("4g5gMro数据统计分析.....");
+        String today="2019-06-13";
+        List<Integer> earfcn = new ArrayList<>();
+        earfcn.add(37900);
+        earfcn.add(38400);
+        fourSaopinAddrDao.analysisMroData(today,earfcn);
+
+        //5g....
+
+
+        System.out.println("4g5gMro数据统计分析完毕!!!!");
+
+    }
+    public void analysisSaoPinData(){
+        //4g mro 分析 处理流程
+        String today="2019-06-13";
+        System.out.println("4g5g扫频数据统计分析.....");
+        saoPinHandle.analysisSaoPinData("4g",today);
+        saoPinHandle.analysisSaoPinData("5g",today);
+        System.out.println("4g5g扫频数据统计分析完毕！！！！");
+
 
     }
 

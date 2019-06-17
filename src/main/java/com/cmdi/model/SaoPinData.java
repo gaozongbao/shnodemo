@@ -33,12 +33,21 @@ public class SaoPinData {
 	private Integer earfcn;
 	private Double rs;
 	private Integer mastercellId;
-	
+	private Integer gridid;
+
 	private Integer countf100;
 	private Integer countf110;
 	private Integer countf120;
 	private Integer countall;
-	
+
+	public Integer getGridid() {
+		return gridid;
+	}
+
+	public void setGridid(Integer gridid) {
+		this.gridid = gridid;
+	}
+
 	public Integer getCountall() {
 		return countall;
 	}

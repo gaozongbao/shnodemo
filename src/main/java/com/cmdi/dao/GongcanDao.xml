@@ -49,8 +49,8 @@
   	SET group_concat_max_len = 1024000;
 	  	select carrierffrequencynum as earfcn,pci,count(cgi) as nums,
 	  		GROUP_CONCAT(CONCAT_WS(':',id,longitude,latitude) SEPARATOR ',') as cellidaddr
-	  	from fourg_gc 
-	  	where carrierffrequencynum in 
+	  	from  ${gcTableName}
+	  	where carrierffrequencynum in
 	  		<foreach collection="earfcnlist" index="index" item="item" open="("
         		separator="," close=")">
         		#{item,jdbcType=INTEGER}

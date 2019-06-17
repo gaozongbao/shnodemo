@@ -8,12 +8,14 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.cmdi.model.CellAddr;
 import com.cmdi.model.CellIdAddr;
 import com.cmdi.model.SaoPinData;
 import com.cmdi.util.MapDistance;
+import org.springframework.stereotype.Component;
 
 /** 
  * @ClassName: SaoPinHandle 
@@ -22,15 +24,32 @@ import com.cmdi.util.MapDistance;
  * @date: 2019年6月13日
  * @version: 1.0 
  */
+@Component
 public class SaoPinHandle {
-	public static void main(String[] args) {
-		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-application.xml");
-		SqlSessionTemplate bean = context.getBean("sqlSessionTemplate", SqlSessionTemplate.class);
+
+	@Autowired
+	private SqlSessionTemplate bean;
+
+	public void analysisSaoPinData(String type,String date) {//4g 5g
+		String saoPinTableName ="fiveg_saopin_addr";
+		String gcTableName ="fiveg_gc";
+		String rsrpTableName="fiveg_saopin_addr_mastercell";
+		String coverTableName="fiveg_saopin_mastercell_cover";
+		if(type.equals("4g")){
+			gcTableName ="fourg_gc";
+			saoPinTableName="fourg_saopin_addr";
+			rsrpTableName="fourg_saopin_addr_mastercell";
+			coverTableName="fourg_saopin_mastercell_cover";
+		}
 		HashMap<String, Object> input = new HashMap<String, Object>();
 		ArrayList<Integer> earfcnsArrayList = new ArrayList<Integer>();
 		earfcnsArrayList.add(37900);
 //		earfcnsArrayList.add(38400);
 		input.put("earfcnlist", earfcnsArrayList);
+		input.put("gcTableName", gcTableName);
+		input.put("saoPinTableName", saoPinTableName);
+		input.put("rsrpTableName", rsrpTableName);
+		input.put("coverTableName", coverTableName);
 
 
 		// 公参数据
@@ -83,7 +102,7 @@ public class SaoPinHandle {
 				masterrsrp.put(idearfcn, list2);
 			}
 		}
-		input.put("date", "2019061011");
+		input.put("date", date);
 		//导入数据之前删除旧数据
 		bean.delete("com.cmdi.dao.SaopinDao.deletesaopinaddrmastercell", input);
 		//每batchSize进行一次批量插入
@@ -148,7 +167,6 @@ public class SaoPinHandle {
 		bean.delete("com.cmdi.dao.SaopinDao.deletemastercellcover", input);
 		//如果数据量多，可以考虑多次批量插入
 		bean.insert("com.cmdi.dao.SaopinDao.insertmastercellcover", input);
-		context.close();
 	}
 
 	public static CellIdAddr string2cellIdAddr(String s) {
