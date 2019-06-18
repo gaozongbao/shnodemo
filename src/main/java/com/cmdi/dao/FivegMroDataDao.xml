@@ -24,15 +24,15 @@
 		WHERE a.cgi = b.cgi
 	</insert>
 	<update id="deleteMroAnalysis" >
-        delete from ${tableName} where `date`=#{data}
+        delete from ${tableName} where `date`=#{date}
     </update>
 
   <insert id="insertEffectMroData" >
 	  insert into fiveg_mro_cell (date,timestamp,cgi,indexid,enbid,earfcn,pci,sctadv,scaoa,scrsrp)
 	  select date,timestamp,cgi,indexid,enbid,earfcn,pci,sctadv,scaoa,scrsrp+dd.diffvalue as scrsrp from
-	  (select a.*,b.azimuth,if(a.scaoa-azimuth>=0,a.scaoa-azimuth,a.scaoa-azimuth+360) as deg from
+	  (select a.*,b.azimuth,if(FLOOR(a.scaoa*0.5)-azimuth>=0,FLOOR(a.scaoa*0.5)-azimuth,FLOOR(a.scaoa*0.5)-azimuth+360) as deg from
 	  (SELECT date,timestamp,cgi,indexid,enbid,earfcn,pci,scrsrp,sctadv,scaoa FROM `fourg_mro_cell`
-	  where cgi=#{cgi} and scaoa &lt;&gt; -999) a,fiveg_gc b
+	  where cgi=#{cgi} and scaoa &lt;&gt; -999) a,fourg_gc b
 	  where a.cgi=b.cgi) cc, fiveg_aoa_gain dd
 	  where cc.deg=dd.deg
 

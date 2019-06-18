@@ -89,11 +89,12 @@ public class LteDataImportService {
         earfcn.add(37900);
         earfcn.add(38400);
         fivegMroDataDao.analysisMroData("fourg_mro_cell_cover","fourg_mro_cell",today,earfcn);
+        System.out.println("4g-->已经分析完");
         //5g....
 
         fivegMroDataDao.deleteMroAnalysis("fiveg_mro_cell_cover",today);
         fivegMroDataDao.analysisMroData("fiveg_mro_cell_cover","fiveg_mro_cell",today,earfcn);
-
+        System.out.println("5g-->已经分析完");
 
         System.out.println("4g5gMro数据统计分析完毕!!!!");
 
