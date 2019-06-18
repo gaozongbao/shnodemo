@@ -31,8 +31,8 @@ public class SaoPinHandle {
 	private SqlSessionTemplate bean;
 
 	public void analysisSaoPinData(String type,String date) {//4g 5g
-		String saoPinTableName ="fiveg_saopin_addr";
 		String gcTableName ="fiveg_gc";
+		String saoPinTableName ="fiveg_saopin_addr";
 		String rsrpTableName="fiveg_saopin_addr_mastercell";
 		String coverTableName="fiveg_saopin_mastercell_cover";
 		if(type.equals("4g")){

@@ -11,6 +11,12 @@ public interface FivegMroDataDao {
     public void insertEffectMroData(@Param("cgi") String cgi);
     public void insertunEffectMroData(@Param("cgi") String cgi);
 
+    /**
+     * 算法一
+     * @param cgi
+     */
+    public void insertunEffectMroDataV1(@Param("cgi") String cgi);
+
     public List<Map<String,Object>> getEffectMroCgi();
     public List<Map<String,Object>> getUnEffectMroCgi();
 

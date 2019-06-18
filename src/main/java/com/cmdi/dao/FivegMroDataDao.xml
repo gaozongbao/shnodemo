@@ -37,13 +37,25 @@
 	  where cc.deg=dd.deg
 
   </insert>
-  <insert id="insertunEffectMroData" >
+
+	<insert id="insertunEffectMroData" >
+	insert into fiveg_mro_cell (date,timestamp,cgi,indexid,enbid,earfcn,pci,sctadv,scaoa,scrsrp)
+	 SELECT date,timestamp,cgi,indexid,enbid,earfcn,pci,sctadv,scaoa,
+		scrsrp+3 as scrsrp
+		FROM `fourg_mro_cell` where cgi=#{cgi} and scaoa = -999
+
+  </insert>
+
+
+	<insert id="insertunEffectMroDataV1" >
 	  insert into fiveg_mro_cell (date,timestamp,cgi,indexid,enbid,earfcn,pci,sctadv,scaoa,scrsrp)
 	 SELECT date,timestamp,cgi,indexid,enbid,earfcn,pci,sctadv,scaoa,
 	scrsrp+(SELECT diffvalue FROM fiveg_aoa_gain_aopwrong  WHERE id >= (SELECT floor(RAND() * (SELECT MAX(id) FROM fiveg_aoa_gain_aopwrong))) ORDER BY id LIMIT 1) as scrsrp
 	FROM `fourg_mro_cell` where cgi=#{cgi} and scaoa = -999
 
   </insert>
+
+
   <select id="getUnEffectMroCgi" resultType="map">
 	  SELECT f.cgi FROM fourg_mro_cell f
 	  where f.scaoa=-999
