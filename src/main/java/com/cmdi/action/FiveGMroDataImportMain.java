@@ -12,7 +12,7 @@ public class FiveGMroDataImportMain {
     public static void main(String[] args) {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-application.xml");
         FivegMroDataDao bean = context.getBean("fivegMroDataDao", FivegMroDataDao.class);
-        /*List<Map<String, Object>> effectMroCgi = bean.getEffectMroCgi();
+       /* List<Map<String, Object>> effectMroCgi = bean.getEffectMroCgi();
         for(Map<String, Object> item:effectMroCgi){
             System.out.println("开始插入有效cgi--》"+item.get("cgi").toString());
             bean.insertEffectMroData(item.get("cgi").toString());
