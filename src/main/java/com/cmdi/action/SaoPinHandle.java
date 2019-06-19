@@ -74,24 +74,23 @@ public class SaoPinHandle {
 		}
 
 		// 扫频数据
-		List<SaoPinData> allSaopinData = bean.selectList("com.cmdi.dao.SaopinDao.selectsaopindata", input);
+		List<SaoPinData> coverSaopinData = bean.selectList("com.cmdi.dao.SaopinDao.selectsaopindata", input);
+		List<SaoPinData> laxianSaoPinData = bean.selectList("com.cmdi.dao.SaopinDao.selectlaxiansaopindata", input);
 
-		System.out.println("earfcn="+ earfcnsArrayList +"的扫频数据行数" + allSaopinData.size());
+		System.out.println("earfcn="+ earfcnsArrayList +"的求覆盖率扫频数据行数" + coverSaopinData.size());
 
 		//存放每个主服务小区的所有rsrp值，key=cellid:earfcn，value=list<rsrp>
 		HashMap<String, ArrayList<Double>> masterrsrp = new HashMap<String, ArrayList<Double>>();
-		
-		//得到主服务小区
-		for (SaoPinData saoPinData : allSaopinData) {
+
+		//求覆盖率
+		for(SaoPinData saoPinData : coverSaopinData){
 			String earfcnpci = saoPinData.getEarfcn() + ":" + saoPinData.getPci();
 			ArrayList<CellIdAddr> list = map.getOrDefault(earfcnpci, null);
 			//如果当前扫频数据根据earfcn、pci无法得到有效的小区集合，那么该条扫频数据丢弃
 			if(list == null || list.isEmpty())
 				continue;
 			//根据经纬度得到距离最近的小区id作为主服务小区
-			CellIdAddr masterCellIdAddr = getMasterCellIdByMinDistance(saoPinData.getLongitude(), saoPinData.getLatitude(), list);
-			saoPinData.setMastercellId(masterCellIdAddr.getCellid());
-//			System.out.println(saoPinData);
+			CellIdAddr masterCellIdAddr = getMasterCellIdByMinDistance(false,saoPinData.getLongitude(), saoPinData.getLatitude(), list);
 			//获取每个小区的所有频点的rsrp值  用来统计覆盖率
 			String idearfcn=masterCellIdAddr.getCellid() + ":" + saoPinData.getEarfcn();
 			if(masterrsrp.containsKey(idearfcn)) {
@@ -102,25 +101,47 @@ public class SaoPinHandle {
 				masterrsrp.put(idearfcn, list2);
 			}
 		}
+
+		//得到主服务小区
+		for (SaoPinData saoPinData : laxianSaoPinData) {
+			String earfcnpci = saoPinData.getEarfcn() + ":" + saoPinData.getPci();
+			ArrayList<CellIdAddr> list = map.getOrDefault(earfcnpci, null);
+			//如果当前扫频数据根据earfcn、pci无法得到有效的小区集合，那么该条扫频数据丢弃
+			if(list == null || list.isEmpty())
+				continue;
+			//根据经纬度得到距离最近的小区id作为主服务小区
+			CellIdAddr masterCellIdAddr = getMasterCellIdByMinDistance(true,saoPinData.getLongitude(), saoPinData.getLatitude(), list);
+			if(masterCellIdAddr==null){
+				saoPinData.setMastercellId(-1);
+			}else{
+				saoPinData.setMastercellId(masterCellIdAddr.getCellid());
+			}
+//
+		}
+
+
+
+
+
 		input.put("date", date);
 		//导入数据之前删除旧数据
 		bean.delete("com.cmdi.dao.SaopinDao.deletesaopinaddrmastercell", input);
 		//每batchSize进行一次批量插入
 		int batchSize = 10000;
-		int page = allSaopinData.size() / batchSize;
+		int page = laxianSaoPinData.size() / batchSize;
 		for(int i = 0; i < page; i++) {
-			List<SaoPinData> sulist = allSaopinData.subList(0, batchSize);
+			List<SaoPinData> sulist = laxianSaoPinData.subList(0, batchSize);
 			input.put("splist", sulist);
 			bean.insert("com.cmdi.dao.SaopinDao.insertsaopinaddrmastercell", input);
 			sulist.clear();
 			System.out.println("ok " + i);
 		}
-		if(!allSaopinData.isEmpty()) {
-			input.put("splist", allSaopinData);
+		if(!laxianSaoPinData.isEmpty()) {
+			input.put("splist", laxianSaoPinData);
 			bean.insert("com.cmdi.dao.SaopinDao.insertsaopinaddrmastercell", input);
 			System.out.println("ok ");
 		}
-		allSaopinData.clear();
+		laxianSaoPinData.clear();
 		
 		
 		//所有小区所有频点的覆盖率,key=cellid:earfcn，value=int[3][earfncs]，第一行表示earfcn的值，第二行表示大于等于earfcn的个数，第三行表示小于earfcn的个数
@@ -188,7 +209,7 @@ public class SaoPinHandle {
 	* @author 高宗宝
 	* @date 2019年6月13日下午4:57:02
 	*/ 
-	public static CellIdAddr getMasterCellIdByMinDistance(double lon, double lat, ArrayList<CellIdAddr> list) { CellIdAddr addr = new CellIdAddr(-1,0D,0D);
+	public static CellIdAddr getMasterCellIdByMinDistance(boolean consideDistance,double lon, double lat, ArrayList<CellIdAddr> list) { CellIdAddr addr = new CellIdAddr(-1,0D,0D);
 		double minD = Integer.MAX_VALUE;
 		for (CellIdAddr cellIdAddr : list) {
 			double d = MapDistance.GetDistance(lat, lon, cellIdAddr.getLatitude(), cellIdAddr.getLongitude());
@@ -198,6 +219,9 @@ public class SaoPinHandle {
 				addr.setLongitude(cellIdAddr.getLongitude());
 				addr.setLatitude(cellIdAddr.getLatitude());
 			}
+		}
+		if(consideDistance&&minD>2000){
+			return null;
 		}
 		return addr;
 	}
