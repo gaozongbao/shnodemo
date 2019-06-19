@@ -100,7 +100,6 @@ public class LteDataImportService {
 
     }
     public void analysisSaoPinData(){
-        //4g mro 分析 处理流程
         String today="2019-06-13";
         System.out.println("4g5g扫频数据统计分析.....");
         saoPinHandle.analysisSaoPinData("4g",today);
