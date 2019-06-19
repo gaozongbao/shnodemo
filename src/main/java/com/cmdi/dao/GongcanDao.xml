@@ -47,15 +47,24 @@
   <resultMap type="com.cmdi.model.CellAddr" id="selectearfcnpcicelllistmap"></resultMap>
   <select id="selectearfcnpcicelllist" parameterType="map" resultMap="selectearfcnpcicelllistmap">
   	SET group_concat_max_len = 1024000;
-	  	select carrierffrequencynum as earfcn,pci,count(cgi) as nums,
-	  		GROUP_CONCAT(CONCAT_WS(':',id,longitude,latitude) SEPARATOR ',') as cellidaddr
-	  	from  ${gcTableName}
-	  	where carrierffrequencynum in
+	  	select f.carrierffrequencynum as earfcn,f.pci,count(f.cgi) as nums,
+	  		GROUP_CONCAT(CONCAT_WS(':',f.id,f.longitude,f.latitude) SEPARATOR ',') as cellidaddr
+	  	from  ${gcTableName} f
+        <if test="gcTableName =='fiveg_gc' ">
+          left join fourg_gc g on f.cgi=g.cgi
+        </if>
+	  	where f.carrierffrequencynum in
 	  		<foreach collection="earfcnlist" index="index" item="item" open="("
         		separator="," close=")">
         		#{item,jdbcType=INTEGER}
     		</foreach> 
-	  	 	and pci is not null and longitude is not null and latitude is not null
-	  	GROUP BY carrierffrequencynum,pci
+	  	 	and f.pci is not null and f.longitude is not null and f.latitude is not null
+	  	<if test="gcTableName =='fourg_gc' ">
+          and f.coveragetype ='室外'
+        </if>
+        <if test="gcTableName =='fiveg_gc' ">
+          and g.coveragetype ='室外'
+        </if>
+	  	GROUP BY f.carrierffrequencynum,f.pci
   </select>
 </mapper>
