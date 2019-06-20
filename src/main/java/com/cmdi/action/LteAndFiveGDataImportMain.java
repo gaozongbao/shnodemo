@@ -6,6 +6,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class LteAndFiveGDataImportMain {
 
+    /**
+     * 文件名格式 5G扫频数据-网格19.csv
+     * @param args
+     */
     public static void main(String[] args) {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-application.xml");
         LteDataImportService bean = context.getBean("lteDataImportService", LteDataImportService.class);
