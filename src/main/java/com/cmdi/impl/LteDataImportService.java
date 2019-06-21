@@ -26,6 +26,11 @@ public class LteDataImportService {
     @Autowired
     private SaoPinHandle saoPinHandle;
 
+    /**
+     *
+     * @param filePath 文件名地址
+     * @param type  值 4g/5g  用来区分45g
+     */
     public void importLteSaoPinData(String filePath,String type){//type 值为 4g/5g
         if(StringUtils.isNotBlank(filePath)){
             File f = new File(filePath);

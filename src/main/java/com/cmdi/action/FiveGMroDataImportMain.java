@@ -8,7 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 public class FiveGMroDataImportMain {
-
+    /**
+     *
+     * main 方法运行逻辑
+     * 基于4g mro 原始数据 汇聚5g mro 插入表 fiveg_mro_cell
+     *
+     * 数据插入完毕 后调用 analysisMroData 分析 4G 5G 模块所用到的 数据
+     * 涉及到的表
+     * 表一 fourg_mro_cell_cover mro  小区及覆盖率
+     * 表二 fiveg_mro_cell_cover 小区及覆盖率
+     *
+     */
     public static void main(String[] args) {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-application.xml");
         FivegMroDataDao bean = context.getBean("fivegMroDataDao", FivegMroDataDao.class);
